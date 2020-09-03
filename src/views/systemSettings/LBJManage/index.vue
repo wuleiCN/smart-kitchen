@@ -59,7 +59,7 @@
           <el-radio v-model="addForm.menuCag" label="1">在用</el-radio>
           <el-radio v-model="addForm.menuCag" label="2">停用</el-radio>
         </el-form-item>
-        <el-form-item label="设备图片" label-width="100px" style="height: 85px;">
+        <el-form-item label="设备图片" label-width="100px" style="height: 93px;">
           <el-upload
             action="https://jsonplaceholder.typicode.com/posts/"
             list-type="picture-card"
@@ -68,6 +68,7 @@
           >
             <i class="el-icon-plus"></i>
           </el-upload>
+          <div style="position: absolute;height: 20px;line-height: 20px;color: #aaa;bottom: -71px;">(最多上传3张且不超过1M大小的图片)</div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -107,7 +108,7 @@
           <el-radio v-model="editForm.menuCag" label="1">在用</el-radio>
           <el-radio v-model="editForm.menuCag" label="2">停用</el-radio>
         </el-form-item>
-        <el-form-item label="设备图片" label-width="100px" style="height: 85px;">
+        <el-form-item label="设备图片" label-width="100px" style="height: 93px;">
           <el-upload
             action="https://jsonplaceholder.typicode.com/posts/"
             list-type="picture-card"
@@ -116,6 +117,7 @@
           >
             <i class="el-icon-plus"></i>
           </el-upload>
+          <div style="position: absolute;height: 20px;line-height: 20px;color: #aaa;bottom: -71px;">(最多上传3张且不超过1M大小的图片)</div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
