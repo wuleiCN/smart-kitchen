@@ -161,6 +161,7 @@ export default {
       .el-form-item__content {
         margin-left: 120px;
         height: 34px;
+        line-height: 34px;
         .el-input,
         .el-input__inner {
           width: 455px;

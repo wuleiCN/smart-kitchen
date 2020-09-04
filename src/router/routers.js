@@ -1,7 +1,6 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
 import Layout from "../layout/index"
-
 Vue.use(VueRouter)
 
 const routes = [
@@ -96,14 +95,14 @@ const routes = [
     meta: { title: "公司管理", icon: "el-icon-office-building" },
     children: [
       {
-        path: "maintain",
-        component: resolve => require(["@/views/companyManagement/maintain"], resolve),
+        path: "register",
+        component: resolve => require(["@/views/companyManagement/register"], resolve),
         name: "公司注册",
         meta: { title: "公司注册" }
       },
       {
-        path: "register",
-        component: resolve => require(["@/views/companyManagement/register"], resolve),
+        path: "maintain",
+        component: resolve => require(["@/views/companyManagement/maintain"], resolve),
         name: "公司信息维护",
         meta: { title: "公司信息维护" }
       }
@@ -120,6 +119,7 @@ const routes = [
       {
         path: "LBJ",
         name: "报警设备管理",
+        component: resolve => require(["@/views/deviceManagement"], resolve),
         meta: { title: "报警设备管理" },
         children: [
           {

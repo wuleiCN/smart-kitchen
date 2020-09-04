@@ -1,13 +1,15 @@
 <template>
-  <div>123</div>
+  <div>
+    <router-view />
+  </div>
 </template>
 
 <script>
 export default {
   data() {
-    return {}
+    return {};
   }
-}
+};
 </script>
 
 <style lang="sass" scoped>

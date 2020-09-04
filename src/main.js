@@ -9,6 +9,7 @@ import "./router/index"
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false
+// Vue.http.options.credentials = true
 
 new Vue({
   router,
