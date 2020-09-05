@@ -2,17 +2,12 @@
   <div class="content">
     <el-card>
       <el-steps :active="active" finish-status="success">
-        <el-step title="公司基本信息" />
-        <el-step title="开户行信息" />
-        <el-step title="人员信息" />
+        <el-step title="客户基本信息" />
+        <el-step title="客户银行信息" />
+        <el-step title="客户人员信息" />
       </el-steps>
       <!-- 第一步 -->
       <el-form v-if="active === 0">
-        <el-form-item label="公司类别" label-width="120px">
-          <el-radio v-model="menuCag" label="1">代理商</el-radio>
-          <el-radio v-model="menuCag" label="2">加盟商</el-radio>
-          <el-radio v-model="menuCag" label="3">合作商</el-radio>
-        </el-form-item>
         <el-form-item label="公司名称" label-width="120px">
           <el-input autocomplete="off" />
         </el-form-item>

@@ -1,13 +1,20 @@
 <template>
   <div>
-    <el-aside width="220px">
+    <el-aside :width="isCollapse ? '' : '220px'">
+      <div class="fold">
+        <a @click="isCollapse = !isCollapse">
+          <i v-show="!isCollapse" class="el-icon-s-fold"></i>
+          <i v-show="isCollapse" class="el-icon-s-unfold"></i>
+        </a>
+      </div>
       <el-menu
         :default-active="activeMenu"
-        :collapse-transition="true"
+        :collapse-transition="false"
         mode="vertical"
         router
         unique-opened
         class="el-menu-vertical-demo"
+        :collapse="isCollapse"
       >
         <el-menu-item index="/">
           <i class="el-icon-menu"></i>
@@ -17,7 +24,7 @@
           <el-submenu :index="item.path">
             <template slot="title">
               <i :class="item.meta.icon"></i>
-              <span>{{ item.meta.title }}</span>
+              <span v-show="!isCollapse">{{ item.meta.title }}</span>
             </template>
             <el-menu-item-group
               v-for="(v,i) in item.children"
@@ -27,7 +34,7 @@
               <el-submenu v-if="v.children" :index="item.path+'/'+v.path">
                 <template slot="title">
                   <i :class="v.meta.icon"></i>
-                  <span>{{ v.name }}</span>
+                  <span v-show="!isCollapse">{{ v.name }}</span>
                 </template>
                 <el-menu-item
                   v-for="(value,num) in v.children"
@@ -49,7 +56,8 @@ export default {
   name: "Sidebar",
   data() {
     return {
-      routes: []
+      routes: [],
+      isCollapse: true
     };
   },
   computed: {
@@ -57,14 +65,36 @@ export default {
       return this.$route.path;
     }
   },
-  created() {
-    this.routes = this.$router.options.routes;
-    this.routes.shift();
+  async created() {
+    await this.getRoutes();
     console.log(this.routes);
+  },
+  methods: {
+    getRoutes() {
+      this.routes = []
+      this.routes = this.$router.options.routes;
+      this.routes.shift();
+      console.log(this.routes);
+    }
   }
 };
 </script>
 
-<style lang="sass" scoped>
-
+<style lang="scss" scoped>
+.fold {
+  display: block;
+  width: 100%;
+  height: 40px;
+  a {
+    display: block;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    i:before {
+      font-size: 40px;
+    }
+  }
+}
 </style>

@@ -13,7 +13,7 @@
           <el-input autocomplete="off" />
         </el-form-item>
         <el-form-item label="详细地址" label-width="120px">
-          <el-select>
+          <el-select v-model="value">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -32,8 +32,8 @@
             />
             <el-button
               v-if="fileValue"
-              type="success"
-              icon="el-icon-folder-opened"
+              type="danger"
+              icon="el-icon-delete"
               @click="remvoeFile"
             >删除</el-button>
             <!-- <el-button type="success" icon="el-icon-folder-opened">选择</el-button> -->

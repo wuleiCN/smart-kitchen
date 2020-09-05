@@ -4,12 +4,12 @@ import Layout from "../layout/index"
 Vue.use(VueRouter)
 
 const routes = [
-  // {
-  //   path: '/login',
-  //   meta: { title: '登录', noCache: true },
-  //   component: resolve => require(['@/views/login'], resolve),
-  //   hidden: true
-  // },
+  {
+    path: "/login",
+    meta: { title: "登录", noCache: true },
+    component: resolve => require(["@/views/Login"], resolve),
+    hidden: true
+  },
   {
     path: "/",
     component: Layout,
@@ -130,7 +130,7 @@ const routes = [
           },
           {
             path: "Maintain",
-            component: resolve => require(["@/views/deviceManagement/FF/Maintain"], resolve),
+            component: resolve => require(["@/views/deviceManagement/LBJ/Maintain"], resolve),
             name: "报警设备维护",
             meta: { title: "报警设备维护" }
           }
@@ -139,6 +139,7 @@ const routes = [
       {
         path: "FF",
         name: "灭火设备管理",
+        component: resolve => require(["@/views/deviceManagement"], resolve),
         meta: { title: "灭火设备管理" },
         children: [
           {

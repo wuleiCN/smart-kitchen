@@ -4,7 +4,7 @@
       <el-header>
         <div class="left-menu">
           <img src="http://118.190.153.247:9000/Scripts/assets/img/logo.png" />
-          <h3>智慧厨房监视管理系统</h3>
+          <h3>香道云厨智慧厨房管理平台</h3>
         </div>
         <div class="right-menu">
           <i class="el-icon-warning"></i>
