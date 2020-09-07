@@ -16,8 +16,8 @@
           />-->
           <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
             <div class="avatar-wrapper">
-              <img src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
-              <span>张无忌</span>
+              <img :src="userInfo.Avatar" />
+              <span>{{ userInfo.Name }}</span>
               <i class="el-icon-caret-bottom"></i>
             </div>
             <el-dropdown-menu slot="dropdown">
@@ -58,6 +58,7 @@
 
 <script>
 import Sidebar from "./components/Sidebar.vue";
+import { mapState } from "vuex";
 export default {
   name: "Layout",
   components: {
@@ -66,8 +67,12 @@ export default {
   data() {
     return {};
   },
+  computed: {
+    ...mapState(["userInfo"])
+  },
   created() {
     console.log(this.$route);
+    console.log(this.userInfo);
   }
 };
 </script>

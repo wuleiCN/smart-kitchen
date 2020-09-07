@@ -1,16 +1,15 @@
 import axios from "axios"
-import Vue from "vue"
 import { Notification } from "element-ui"
-import { getToken } from "@/utils/auth"
+// import { getToken } from "@/utils/auth"
+import Cookies from "js-cookie"
 const service = axios.create({
   baseURL: "/",
   timeout: 36000 // 请求超时时间
 })
 service.interceptors.request.use(
   config => {
-    Vue.__shop_scope.loading()
-    if (getToken()) {
-      config.headers["Authorization"] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
+    if (Cookies.get("TOKEN_KEY")) {
+      config.headers["Token"] = Cookies.get("TOKEN_KEY") // 让每个请求携带自定义token 请根据实际情况自行修改
     }
     config.headers["Content-Type"] = "application/json"
     return config
@@ -27,7 +26,6 @@ service.interceptors.request.use(
 )
 axios.interceptors.response.use(res => {
   // console.log('res intercepoter:  ', res)
-  Vue.__shop_scope.unloading()
   if (![200, 201].includes(res.data.meta.status)) {
     Notification.error({
       title: "网络请求超时",

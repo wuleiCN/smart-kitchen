@@ -13,7 +13,7 @@
       >
         <el-form-item label="账号" prop="username">
           <el-input
-            v-model="form.username"
+            v-model.trim="form.username"
             prefix-icon="el-icon-user-solid"
             placeholder="账号/手机号码"
             autocomplete="off"
@@ -21,7 +21,7 @@
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input
-            v-model="form.password"
+            v-model.trim="form.password"
             prefix-icon="el-icon-s-cooperation"
             placeholder="请输入密码"
             type="password"
@@ -32,14 +32,17 @@
           <el-link target="_blank">忘记密码?</el-link>
         </el-form-item>
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="login">确 定</el-button>
+        <el-button type="primary" @click="Login">确 定</el-button>
       </el-form>
     </el-card>
   </div>
 </template>
 
 <script>
-import { login } from "@/api/Login.js";
+import { login, getUser } from "@/api/Login.js";
+import Cookies from "js-cookie";
+// import { setToken } from "@/utils/auth.js";
+// import tk from "@/utils/token.js";
 export default {
   data() {
     return {
@@ -70,11 +73,16 @@ export default {
     };
   },
   methods: {
-    login() {
+    Login() {
       this.$refs.ruleForm.validate(async (valid) => {
         if (valid) {
-          const data = await login(this.form);
-          console.log(data);
+          const { data: res } = await login(this.form);
+          Cookies.set("TOKEN_KEY", res.Token);
+          const { data: info } = await getUser();
+          // setToken("TOKEN_KEY", res.Token);
+          this.$store.commit("getUserInfo", info)
+          console.log(info, res);
+          this.$router.push({ path: "/" });
         } else {
           console.log("error submit!!");
           return false;

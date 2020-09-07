@@ -42,10 +42,21 @@
 </template>
 
 <script>
+import { dataInit, msgCount } from "@/api/systemSetting/dataInit.js";
 export default {
   name: "Dashboard",
   data() {
     return {};
+  },
+  created() {
+    this.getInfo();
+  },
+  methods: {
+    async getInfo() {
+      const { data: res } = await msgCount();
+      await dataInit();
+      console.log(res);
+    }
   }
 };
 </script>

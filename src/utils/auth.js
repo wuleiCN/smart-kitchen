@@ -1,17 +1,22 @@
 
-export function getToken() {
-  return sessionStorage.getItem("TOKEN_KEY")
+export function getToken(key) {
+  const data = window.sessionStorage.getItem(key)
+  try {
+    return JSON.parse(data)
+  } catch (err) {
+    return data
+  }
   // return Cookies.get(TokenKey)
 }
 
-export function setToken(token, rememberMe) {
-  // if (rememberMe) {
-  //   return Cookies.set(TokenKey, token, { expires: Config.tokenCookieExpires })
-  // } else return Cookies.set(TokenKey, token)
-  return sessionStorage.setItem("TOKEN_KEY", token)
+export function setToken(key, value) {
+  if (typeof value === "object") {
+    value = JSON.stringify(value)
+  }
+  window.sessionStorage.setItem(key, value)
 }
 
-export function removeToken() {
+export function removeToken(key) {
   // return Cookies.remove(TokenKey)
-  return sessionStorage.removeItem("TOKEN_KEY")
+  return sessionStorage.removeItem(key)
 }

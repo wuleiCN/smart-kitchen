@@ -52,6 +52,7 @@
 </template>
 
 <script>
+// import { getToken } from "@/utils/auth.js"
 export default {
   name: "Sidebar",
   data() {
@@ -65,17 +66,20 @@ export default {
       return this.$route.path;
     }
   },
-  async created() {
-    await this.getRoutes();
+  created() {
+    this.routes = []
+    // this.routes = getToken("ROUTES_KEY")
+    this.routes = this.$router.options.routes
+    this.routes = this.routes.slice(2)
     console.log(this.routes);
   },
   methods: {
-    getRoutes() {
-      this.routes = []
-      this.routes = this.$router.options.routes;
-      this.routes.shift();
-      console.log(this.routes);
-    }
+    // getRoutes() {
+    //   this.routes = []
+    //   this.routes = this.$router.options.routes;
+    //   this.routes.shift();
+    //   console.log(this.routes);
+    // }
   }
 };
 </script>
