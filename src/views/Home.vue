@@ -7,14 +7,14 @@
         </a>
       </div>
       <div>
-        <h4>当前告警：10条</h4>
+        <h4>当前告警：{{ count }}条</h4>
         <span>
           <p>本月新增告警：</p>
-          <div style="background: #ffce55;">12 条</div>
+          <div style="background: #ffce55;">{{ count }} 条</div>
         </span>
         <span>
           <p>本月已处置告警</p>
-          <div style="background: #53A93F;">12 条</div>
+          <div style="background: #53A93F;">{{ count }} 条</div>
         </span>
         <el-button size="mini" plain>>> 详情</el-button>
       </div>
@@ -26,14 +26,14 @@
         </a>
       </div>
       <div>
-        <h4>当前工单：10条</h4>
+        <h4>当前工单：{{ count }} 条</h4>
         <span>
           <p>本月新增工单：</p>
-          <div style="background: #ffce55;">12 条</div>
+          <div style="background: #ffce55;">{{ count }} 条</div>
         </span>
         <span>
           <p>本月已竣工工单</p>
-          <div style="background: #53A93F;">12 条</div>
+          <div style="background: #53A93F;">{{ count }} 条</div>
         </span>
         <el-button size="mini" plain>>> 详情</el-button>
       </div>
@@ -46,7 +46,9 @@ import { dataInit, msgCount } from "@/api/systemSetting/dataInit.js";
 export default {
   name: "Dashboard",
   data() {
-    return {};
+    return {
+      count: 0
+    };
   },
   created() {
     this.getInfo();
@@ -54,6 +56,7 @@ export default {
   methods: {
     async getInfo() {
       const { data: res } = await msgCount();
+      this.count = res
       await dataInit();
       console.log(res);
     }

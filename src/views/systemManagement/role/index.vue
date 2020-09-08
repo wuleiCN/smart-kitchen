@@ -48,7 +48,7 @@
         <el-tabs ref="tab" type="border-card">
           <el-tab-pane label="用户管理">
             <el-tree
-              :data="$router.options.routes"
+              :data="routes"
               :props="treeProps"
               show-checkbox
               node-key="id"
@@ -97,6 +97,7 @@ export default {
   data() {
     return {
       tableData: [],
+      routes: [],
       treeProps: {
         label: "name",
         children: "children"
@@ -111,7 +112,11 @@ export default {
       }
     };
   },
-  created() {},
+  created() {
+    this.routes = [];
+    this.routes = this.$router.options.routes;
+    this.routes = this.routes.slice(2);
+  },
   methods: {
     editData(v) {
       this.editForm.dialogEditDataVisible = true;

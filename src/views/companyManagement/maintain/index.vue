@@ -91,8 +91,9 @@
 </template>
 
 <script>
-import Batch from "@/views/deviceManagement/FF/Batch"
+import Batch from "@/views/deviceManagement/FF/Batch";
 import Pagination from "@/components/Pagination";
+// import { getList } from "@/api/company/maintain";
 export default {
   components: {
     Pagination
@@ -132,6 +133,16 @@ export default {
       },
       dateValue: [],
       tableData: [],
+      companyForm: {
+        Name: "",
+        Types: "",
+        CreditNo: "",
+        Address: "",
+        Master: "",
+        Statuses: "",
+        RegistOnFrom: new Date().getTime(),
+        RegistOnTo: new Date().getTime()
+      },
       page: {
         pageNo: 1,
         resultSize: 10,
@@ -139,16 +150,17 @@ export default {
       }
     };
   },
+  created() {
+    // this.getListInfo();
+  },
   methods: {
+    async getListInfo() {
+      // const { data } = await getList(this.companyForm);
+      // console.log(data);
+    },
     // 分页
     pagination() {
       console.log(this.page);
-    },
-    dialogVisibleInputCancel() {
-      this.$refs.rejectionBasiRef.resetFields();
-      this.$refs.rejectionStroRef.resetFields();
-      this.strongWarning.number = "";
-      this.rejectionDialog.isInputDialogVisible = false;
     },
     val(v) {
       console.log(v);

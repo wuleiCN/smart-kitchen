@@ -5,12 +5,18 @@
         <el-row>
           <el-col :span="6">
             <el-form-item label="客户名称" label-width="110px">
-              <el-select v-model="value" filterable placeholder="请选择">
+              <el-select
+                v-model="value"
+                filterable
+                placeholder="请选择"
+                @focus="getCustomerAll"
+                @change="selectArea"
+              >
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="item in customerOptions"
+                  :key="item.Id"
+                  :label="item.Name"
+                  :value="item.Id"
                 />
               </el-select>
             </el-form-item>
@@ -21,15 +27,14 @@
               size="small"
               icon="el-icon-refresh"
               style="margin-left: 10px;"
-              @click="get"
             >刷 新</el-button>
             <el-button
               type="success"
               size="small"
-              icon="el-icon-search"
+              icon="el-icon-plus"
               style="margin-left: 10px;"
-              @click="get"
-            >查 询</el-button>
+              @click="addArea"
+            >添 加</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -42,8 +47,8 @@
         border
         size="mini"
       >
-        <el-table-column prop="date" label="区域名称" align="left" />
-        <el-table-column prop="name" label="备注" align="center" />
+        <el-table-column prop="Name" label="区域名称" align="left" />
+        <el-table-column prop="Id" label="备注" align="center" />
         <el-table-column #default="{row: data}" label="操作" align="center">
           <el-button size="mini" icon="el-icon-edit" type="text" @click="editData(data)">修改</el-button>
           <el-button size="mini" icon="el-icon-delete" type="text" @click="deleteData(data)">删除</el-button>
@@ -56,42 +61,89 @@
       :limit.sync="page.resultSize"
       @pagination="pagination"
     />
+    <el-dialog title="添加" :visible.sync="dialogAddDataVisible" @close="addFormClose">
+      <el-form ref="areaRef" :model="areaForm" :rules="rules">
+        <el-form-item label="区域名称" label-width="100px">
+          <el-input v-model="areaForm.Name" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="备注" label-width="100px">
+          <el-input v-model="areaForm.Id" autocomplete="off" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addFormClose">取 消</el-button>
+        <el-button type="primary" @click="dialogAddDataVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="修改" :visible.sync="dialogEditDataVisible" @close="editFormClose">
+      <el-form ref="areaRef" :model="areaForm" :rules="rules">
+        <el-form-item label="区域名称" label-width="100px">
+          <el-input v-model="areaForm.Name" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="备注" label-width="100px">
+          <el-input v-model="areaForm.Id" autocomplete="off" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editFormClose">取 消</el-button>
+        <el-button type="primary" @click="dialogEditDataVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import Batch from "@/views/deviceManagement/FF/Batch";
 import Pagination from "@/components/Pagination";
+import { getList } from "@/api/customer/maintain.js";
+import { getCustomers } from "@/api/customer/area.js";
 export default {
   components: {
     Pagination
   },
   data() {
     return {
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎"
-        }
-      ],
+      customerOptions: [],
       value: "",
       tableData: [],
+      areaForm: {},
+      dialogAddDataVisible: false,
+      dialogEditDataVisible: false,
       page: {
         pageNo: 1,
         resultSize: 10,
         total: 0
+      },
+      rules: {
+        Name: [
+          { required: true, message: "请输入名称!", trigger: "blur" },
+          {
+            min: 2,
+            max: 22,
+            message: "长度在 2 到 22 个字符",
+            trigger: "blur"
+          }
+        ],
+        Id: [
+          { required: true, message: "请输入内容!", trigger: "blur" },
+          {
+            min: 2,
+            message: "长度在2个字符以上",
+            trigger: "blur"
+          }
+        ]
       }
     };
   },
   methods: {
+    async getCustomerAll() {
+      const data = await getList();
+      if (data.status === 200) this.customerOptions = data.data;
+    },
+    async selectArea(val) {
+      const data = await getCustomers(val);
+      if (data.status === 200) this.tableData = data.data;
+      console.log(data);
+    },
     // 分页
     pagination() {
       console.log(this.page);
@@ -102,11 +154,23 @@ export default {
       this.strongWarning.number = "";
       this.rejectionDialog.isInputDialogVisible = false;
     },
-    val(v) {
+    addArea() {
+      this.dialogAddDataVisible = true;
+    },
+    addFormClose() {
+      this.$refs.areaRef.resetFields();
+      this.dialogAddDataVisible = false;
+    },
+    editData(v) {
+      this.dialogEditDataVisible = true;
       console.log(v);
     },
-    get() {
-      console.log(Batch);
+    editFormClose() {
+      this.$refs.areaRef.resetFields();
+      this.dialogEditDataVisible = false;
+    },
+    deleteData(v) {
+      console.log(v);
     }
   }
 };
@@ -121,7 +185,7 @@ export default {
       height: 50px;
     }
     .el-form-item {
-      width: 90%;
+      width: 100%;
       .el-form-item__label {
         height: 34px;
         line-height: 34px;
