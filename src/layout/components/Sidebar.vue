@@ -34,15 +34,25 @@
               <el-submenu v-if="v.children" :index="item.path+'/'+v.path">
                 <template slot="title">
                   <i :class="v.meta.icon"></i>
-                  <span v-show="!isCollapse">{{ v.name }}</span>
+                  <span v-show="!isCollapse">{{ v.meta.title }}</span>
                 </template>
                 <el-menu-item
                   v-for="(value,num) in v.children"
                   :key="num"
                   :index="item.path+'/'+v.path+'/'+value.path"
-                >{{ value.name }}</el-menu-item>
+                >
+                  <template slot="title">
+                    <i :class="v.meta.icon"></i>
+                    <span v-show="!isCollapse">{{ value.meta.title }}</span>
+                  </template>
+                </el-menu-item>
               </el-submenu>
-              <el-menu-item v-else :index="item.path+'/'+v.path">{{ v.name }}</el-menu-item>
+              <el-menu-item v-else :index="item.path+'/'+v.path">
+                <template slot="title">
+                  <i :class="v.meta.icon"></i>
+                  <span v-show="!isCollapse">{{ v.meta.title }}</span>
+                </template>
+              </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </div>
@@ -67,10 +77,10 @@ export default {
     }
   },
   created() {
-    this.routes = []
+    this.routes = [];
     // this.routes = getToken("ROUTES_KEY")
-    this.routes = this.$router.options.routes
-    this.routes = this.routes.slice(2)
+    this.routes = this.$router.options.routes;
+    this.routes = this.routes.slice(2);
     console.log(this.routes);
   },
   methods: {

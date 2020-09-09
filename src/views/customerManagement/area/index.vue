@@ -61,12 +61,13 @@
       :limit.sync="page.resultSize"
       @pagination="pagination"
     />
+    <!-- 添加 -->
     <el-dialog title="添加" :visible.sync="dialogAddDataVisible" @close="addFormClose">
       <el-form ref="areaRef" :model="areaForm" :rules="rules">
-        <el-form-item label="区域名称" label-width="100px">
+        <el-form-item label="区域名称" label-width="100px" prop="Name">
           <el-input v-model="areaForm.Name" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="备注" label-width="100px">
+        <el-form-item label="备注" label-width="100px" prop="Id">
           <el-input v-model="areaForm.Id" autocomplete="off" />
         </el-form-item>
       </el-form>
@@ -75,12 +76,13 @@
         <el-button type="primary" @click="dialogAddDataVisible = false">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 修改 -->
     <el-dialog title="修改" :visible.sync="dialogEditDataVisible" @close="editFormClose">
       <el-form ref="areaRef" :model="areaForm" :rules="rules">
-        <el-form-item label="区域名称" label-width="100px">
+        <el-form-item label="区域名称" label-width="100px" prop="Name">
           <el-input v-model="areaForm.Name" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="备注" label-width="100px">
+        <el-form-item label="备注" label-width="100px" prop="Id">
           <el-input v-model="areaForm.Id" autocomplete="off" />
         </el-form-item>
       </el-form>
@@ -162,6 +164,7 @@ export default {
       this.dialogAddDataVisible = false;
     },
     editData(v) {
+      this.areaForm = v
       this.dialogEditDataVisible = true;
       console.log(v);
     },
@@ -191,6 +194,7 @@ export default {
         line-height: 34px;
       }
       .el-form-item__content {
+        width: 200px;
         height: 34px;
         line-height: 34px;
         margin-left: 110px;
@@ -207,6 +211,9 @@ export default {
           span {
             margin-bottom: 7px;
           }
+          .el-range__icon {
+            line-height: 27px;
+          }
           input:nth-last-child(2) {
             margin-left: 10%;
           }
@@ -222,6 +229,15 @@ export default {
   padding: 0;
   .el-card__body {
     padding: 0;
+  }
+}
+::v-deep .el-dialog {
+  width: 40%;
+  .el-dialog__body {
+    padding: 20px;
+  }
+  .el-dialog__footer {
+    padding: 0 20px 20px;
   }
 }
 </style>

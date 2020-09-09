@@ -38,9 +38,9 @@
             <el-breadcrumb separator="/">
               <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
               <el-breadcrumb-item
-                v-if="$route.name !== '首页'"
+                v-if="$route.name !== 'Home'"
               >{{ $route.matched[1].parent.meta.title }}</el-breadcrumb-item>
-              <el-breadcrumb-item v-if="$route.name !== '首页'">{{ $route.meta.title }}</el-breadcrumb-item>
+              <el-breadcrumb-item v-if="$route.name !== 'Home'">{{ $route.meta.title }}</el-breadcrumb-item>
               <el-breadcrumb-item
                 v-if="$route.matched[1].parent.parent !== undefined"
               >{{ $route.meta.title }}</el-breadcrumb-item>
@@ -58,6 +58,7 @@
 
 <script>
 import Sidebar from "./components/Sidebar.vue";
+// import { getMenus } from "@/api/menus";
 import { mapState } from "vuex";
 export default {
   name: "Layout",
@@ -71,8 +72,15 @@ export default {
     ...mapState(["userInfo"])
   },
   created() {
+    this.getMenusList()
     console.log(this.$route);
     console.log(this.userInfo);
+  },
+  methods: {
+    async getMenusList() {
+      // const data = await getMenus();
+      // console.log(data);
+    }
   }
 };
 </script>

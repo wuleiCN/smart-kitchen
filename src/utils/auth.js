@@ -1,5 +1,5 @@
 
-export function getToken(key) {
+export function getSession(key) {
   const data = window.sessionStorage.getItem(key)
   try {
     return JSON.parse(data)
@@ -9,14 +9,14 @@ export function getToken(key) {
   // return Cookies.get(TokenKey)
 }
 
-export function setToken(key, value) {
+export function setSession(key, value) {
   if (typeof value === "object") {
     value = JSON.stringify(value)
   }
   window.sessionStorage.setItem(key, value)
 }
 
-export function removeToken(key) {
+export function removeSession(key) {
   // return Cookies.remove(TokenKey)
   return sessionStorage.removeItem(key)
 }

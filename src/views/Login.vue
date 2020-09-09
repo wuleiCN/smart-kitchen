@@ -81,7 +81,8 @@ export default {
           const { data: info } = await getUser();
           // setToken("TOKEN_KEY", res.Token);
           this.$store.commit("getUserInfo", info)
-          console.log(info, res);
+          this.$store.dispatch("getRoutesSync")
+          console.log(info, res, this.$router.options.routes);
           this.$router.push({ path: "/" });
         } else {
           console.log("error submit!!");
