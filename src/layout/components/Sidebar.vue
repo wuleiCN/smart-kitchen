@@ -81,16 +81,8 @@ export default {
     // this.routes = getToken("ROUTES_KEY")
     this.routes = this.$router.options.routes;
     this.routes = this.routes.slice(2);
-    console.log(this.routes);
   },
-  methods: {
-    // getRoutes() {
-    //   this.routes = []
-    //   this.routes = this.$router.options.routes;
-    //   this.routes.shift();
-    //   console.log(this.routes);
-    // }
-  }
+  methods: {}
 };
 </script>
 

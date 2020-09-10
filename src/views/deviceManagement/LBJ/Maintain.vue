@@ -53,12 +53,7 @@
               style="margin-left: 30px;"
               @click="get"
             >查 询</el-button>
-            <el-button
-              type="success"
-              size="small"
-              icon="el-icon-plus"
-              @click="get"
-            >设备注册</el-button>
+            <el-button type="success" size="small" icon="el-icon-plus" @click="get">设备注册</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -95,6 +90,7 @@
 <script>
 import Batch from "@/views/deviceManagement/FF/Batch";
 import Pagination from "@/components/Pagination";
+// import { getAlarmList } from "@/api/device/LBJ.js";
 export default {
   components: {
     Pagination
@@ -141,7 +137,13 @@ export default {
       }
     };
   },
+  created() {},
   methods: {
+    // 报警设备列表
+    async getAlarmDeviceList() {
+      // const data = await getAlarmList();
+      // console.log(data);
+    },
     // 分页
     pagination() {
       console.log(this.page);

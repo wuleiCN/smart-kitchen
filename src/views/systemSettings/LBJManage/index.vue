@@ -6,11 +6,12 @@
         round
         icon="el-icon-plus"
         style="  background-color: #03B3B2;color: #fff"
-        @click="addForm.dialogAddDataVisible = true"
+        @click="dialogAddDataVisible = true"
       >添 加</el-button>
     </el-card>
     <el-card>
       <el-table
+        v-loading="loading"
         :data="tableData"
         style="width: 100%;font-size: 13px;"
         row-key="id"
@@ -18,111 +19,112 @@
         stripe
         size="mini"
       >
-        <el-table-column prop="date" label="日期" width="180" align="left" />
-        <el-table-column prop="name" label="姓名" width="180" align="center" />
-        <el-table-column prop="address" label="地址" align="center" />
+        <el-table-column prop="Name" label="报警设备型号" width="180" align="left" />
+        <el-table-column prop="CommandSet" label="指令集" width="180" align="center" />
+        <el-table-column prop="MaintancePeroid" label="维保周期（月）" align="center" />
+        <el-table-column prop="StatusName" label="状态" align="center" />
         <el-table-column #default="{row: data}" label="操作" align="center">
           <el-button size="mini" icon="el-icon-edit" type="text" @click="editData(data)">修改</el-button>
           <el-button size="mini" icon="el-icon-delete" type="text" @click="deleteData(data)">删除</el-button>
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog title="添加" :visible.sync="addForm.dialogAddDataVisible" @close="addFormClose">
+    <!-- 添加 -->
+    <el-dialog title="添加" :visible.sync="dialogAddDataVisible" @close="addFormClose">
       <el-form>
         <el-form-item label="报警设备型号" label-width="100px">
-          <el-input autocomplete="off" />
+          <el-input v-model="deviceFrom.Name" autocomplete="off" />
         </el-form-item>
         <el-form-item label="指令集" label-width="100px">
-          <el-select v-model="addForm.value" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
+          <el-select v-model="commandSetValue" placeholder="请选择">
+            <el-option v-for="(v,i) in deviceFrom.commandSetName" :key="i" :label="v" :value="v" />
           </el-select>
         </el-form-item>
         <el-form-item label="维保周期(月)" label-width="100px">
-          <el-input autocomplete="off" />
+          <el-input v-model="deviceFrom.MaintancePeroid" autocomplete="off" />
         </el-form-item>
         <el-form-item label="独立/集成设备" label-width="105px">
           <el-switch
-            v-model="addForm.disable"
+            v-model="deviceFrom.Alone"
             style="display: block"
             active-color="#13ce66"
             inactive-color="#F0AD4E"
-            :active-text="addForm.disable ? '独立' : '集成'"
-            @change="isDisable"
+            :active-text="deviceFrom.Alone ? '独立' : '集成'"
           />
         </el-form-item>
         <el-form-item label="状态" label-width="100px">
-          <el-radio v-model="addForm.menuCag" label="1">在用</el-radio>
-          <el-radio v-model="addForm.menuCag" label="2">停用</el-radio>
+          <el-radio v-model="deviceFrom.Status" label="1">在用</el-radio>
+          <el-radio v-model="deviceFrom.Status" label="0">停用</el-radio>
         </el-form-item>
         <el-form-item label="设备图片" label-width="100px" style="height: 93px;">
           <el-upload
+            :file-list="urlList"
             action="https://jsonplaceholder.typicode.com/posts/"
             list-type="picture-card"
             :on-preview="imgCardPreview"
             :on-remove="imgRemove"
+            :on-change="imgUpload"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <div style="position: absolute;height: 20px;line-height: 20px;color: #aaa;bottom: -71px;">(最多上传3张且不超过1M大小的图片)</div>
+          <div
+            style="position: absolute;height: 20px;line-height: 20px;color: #aaa;bottom: -71px;"
+          >(最多上传3张且不超过1M大小的图片)</div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addFormClose">取 消</el-button>
-        <el-button type="primary" @click="addForm.dialogEditDataVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogEditDataVisible = false">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="修改" :visible.sync="editForm.dialogEditDataVisible" @close="editFormClose">
+    <!-- 修改 -->
+    <el-dialog title="修改" :visible.sync="dialogEditDataVisible" @close="editFormClose">
       <el-form>
         <el-form-item label="报警设备型号" label-width="100px">
-          <el-input autocomplete="off" />
+          <el-input v-model="deviceFrom.Name" autocomplete="off" />
         </el-form-item>
         <el-form-item label="指令集" label-width="100px">
-          <el-select v-model="editForm.value" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
+          <el-select v-model="commandSetValue" placeholder="请选择">
+            <el-option v-for="(v,i) in deviceFrom.commandSetName" :key="i" :label="v" :value="v" />
           </el-select>
         </el-form-item>
         <el-form-item label="维保周期(月)" label-width="100px">
-          <el-input autocomplete="off" />
+          <el-input v-model="deviceFrom.MaintancePeroid" autocomplete="off" />
         </el-form-item>
         <el-form-item label="独立/集成设备" label-width="105px">
           <el-switch
-            v-model="editForm.disable"
+            v-model="deviceFrom.Alone"
             style="display: block"
             active-color="#13ce66"
             inactive-color="#F0AD4E"
-            :active-text="editForm.disable ? '独立' : '集成'"
-            @change="isDisable"
+            :active-text="deviceFrom.Alone ? '独立' : '集成'"
           />
         </el-form-item>
         <el-form-item label="状态" label-width="100px">
-          <el-radio v-model="editForm.menuCag" label="1">在用</el-radio>
-          <el-radio v-model="editForm.menuCag" label="2">停用</el-radio>
+          <el-radio-group v-model="deviceFrom.Status">
+            <el-radio :label="1">在用</el-radio>
+            <el-radio :label="0">停用</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="设备图片" label-width="100px" style="height: 93px;">
           <el-upload
+            :file-list="urlList"
             action="https://jsonplaceholder.typicode.com/posts/"
             list-type="picture-card"
             :on-preview="imgCardPreview"
             :on-remove="imgRemove"
+            :on-success="imgUpload"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <div style="position: absolute;height: 20px;line-height: 20px;color: #aaa;bottom: -71px;">(最多上传3张且不超过1M大小的图片)</div>
+          <div
+            style="position: absolute;height: 20px;line-height: 20px;color: #aaa;bottom: -71px;"
+          >(最多上传3张且不超过1M大小的图片)</div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="editFormClose">取 消</el-button>
-        <el-button type="primary" @click="editForm.dialogEditDataVisible = false">确 定</el-button>
+        <el-button type="primary" @click="editFormEnter">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog :visible.sync="imgDialogVisible">
@@ -132,83 +134,91 @@
 </template>
 
 <script>
+import { getAlarmList, updataAlarm } from "@/api/systemSetting/customerDevices.js";
 export default {
   data() {
     return {
-      tableData: [
-        {
-          id: 2,
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          id: 3,
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          id: 4,
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        }
-      ],
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        }
-      ],
-      editForm: {
-        value: "",
-        dialogEditDataVisible: false,
-        disable: true,
-        menuCag: "1",
-        menuGroup: "1"
-      },
-      addForm: {
-        value: "",
-        dialogAddDataVisible: false,
-        disable: true,
-        menuCag: "1",
-        menuGroup: "1"
-      },
+      urlList: [],
+      tableData: [],
+      loading: true,
+      deviceFrom: {},
+      commandSetValue: "",
+      dialogEditDataVisible: false,
+      dialogAddDataVisible: false,
       dialogImageUrl: "",
       imgDialogVisible: false
     };
   },
+  created() {
+    this.getCustomerDevicesData();
+  },
   methods: {
+    // 获取列表
+    async getCustomerDevicesData() {
+      try {
+        const data = await getAlarmList();
+        if (data.status === 200) {
+          this.tableData = data.data;
+          this.loading = false;
+        }
+        console.log(data);
+      } catch (error) {
+        this.loading = false;
+        this.$message.error("获取列表失败！");
+      }
+    },
+    // 展示修改弹框
     editData(v) {
-      this.editForm.dialogEditDataVisible = true;
+      if (v.CommandSetName instanceof Array) {
+        v.CommandSetName = v.CommandSetName.split(",");
+      }
+      this.deviceFrom = v;
+      this.dialogEditDataVisible = true;
       console.log(v);
     },
+    // 删除
     deleteData(v) {
       console.log(v);
     },
-    isDisable() {
-      console.log(this.editForm.disable);
-    },
+    // 取消
     addFormClose() {
-      Object.assign(this.$data.addForm, this.$options.data().addForm);
-      this.addForm.dialogEditDataVisible = false;
+      this.deviceFrom = {};
+      this.dialogAddDataVisible = false;
     },
+    // 确定修改
+    async editFormEnter() {
+      // this.deviceFrom.CommandSetName = this.deviceFrom.CommandSetName.join(",")
+      this.deviceFrom.Picture = this.urlList[0].url
+      try {
+        await updataAlarm(this.deviceFrom)
+        this.$message.success("更新成功！")
+      } catch (error) {
+        this.$message.error("更新失败！")
+      }
+      console.log(this.deviceFrom);
+    },
+    // 取消
     editFormClose() {
-      Object.assign(this.$data.editForm, this.$options.data().editForm);
-      this.editForm.dialogEditDataVisible = false;
+      this.deviceFrom = {};
+      this.dialogEditDataVisible = false;
     },
+    // 删除图片
     imgRemove(file, fileList) {
       console.log(file, fileList);
     },
+    // 图片预览
     imgCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.imgDialogVisible = true;
       console.log(this.dialogImageUrl);
+    },
+    // 添加图片
+    imgUpload(file, fileList) {
+      this.url.push({ url: fileList.url });
+      console.log(fileList, this.url);
+    },
+    val(v) {
+      console.log(v);
     }
   }
 };

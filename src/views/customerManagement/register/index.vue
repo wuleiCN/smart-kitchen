@@ -147,15 +147,18 @@ export default {
     finished() {
       this.$refs.formRule.validate(async (valid) => {
         if (valid) {
-          const data = await getRegist(this.customerForm);
-          if (data.status === 200 && data.data.success) {
-            Object.assign(
-              this.$data.customerForm,
-              this.$options.data().customerForm
-            );
-            this.active = 0;
-            this.$message.success("注册成功！");
-          } else {
+          try {
+            const data = await getRegist(this.customerForm);
+            if (data.status === 200 && data.data.success) {
+              Object.assign(
+                this.$data.customerForm,
+                this.$options.data().customerForm
+              );
+              this.active = 0;
+              this.$message.success("注册成功！");
+              console.log(data);
+            }
+          } catch (error) {
             Object.assign(
               this.$data.customerForm,
               this.$options.data().customerForm
@@ -163,7 +166,6 @@ export default {
             this.active = 0;
             this.$message.error("注册失败！");
           }
-          console.log(data);
         }
       });
     },

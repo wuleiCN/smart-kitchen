@@ -135,6 +135,7 @@ export default {
       }
     };
   },
+  created() {},
   methods: {
     prev() {
       this.$refs.formRule.validate((valid) => {

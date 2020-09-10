@@ -39,14 +39,13 @@
               <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
               <el-breadcrumb-item
                 v-if="$route.name !== 'Home'"
-              >{{ $route.matched[1].parent.meta.title }}</el-breadcrumb-item>
-              <el-breadcrumb-item v-if="$route.name !== 'Home'">{{ $route.meta.title }}</el-breadcrumb-item>
+              >{{ $route.matched[$route.matched.length-1].parent.meta.title }}</el-breadcrumb-item>
               <el-breadcrumb-item
-                v-if="$route.matched[1].parent.parent !== undefined"
+                v-if="$route.matched[$route.matched.length-1].parent.parent !== undefined"
               >{{ $route.meta.title }}</el-breadcrumb-item>
             </el-breadcrumb>
             <div class="route_name">
-              <h1>{{ $route.name }}</h1>
+              <h1>{{ $route.meta.title }}</h1>
             </div>
             <router-view />
           </el-main>

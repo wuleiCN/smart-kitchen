@@ -276,14 +276,18 @@ export default {
   },
   methods: {
     async getListInfo() {
-      const data = await getList();
-      if (data.status === 200) {
-        this.tableData = data.data;
+      try {
+        const data = await getList();
+        if (data.status === 200) {
+          this.tableData = data.data;
+          this.loading = false;
+          console.log(data);
+        }
+      } catch (error) {
+        this.$message.error("连接超时！");
         this.loading = false;
-      } else {
-        setTimeout(() => this.$message.error(data.message), 5000);
+        console.log(this.loading);
       }
-      console.log(data);
     },
     // 分页
     pagination() {
@@ -305,7 +309,7 @@ export default {
     },
     dialogEditFormClose() {
       this.editForm = {};
-      this.$refs.formRule.resetFields()
+      this.$refs.formRule.resetFields();
       this.dialogEditForm.dialogEditDataVisible = false;
     },
     dialogEditFormEnter() {

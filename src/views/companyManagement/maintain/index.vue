@@ -57,6 +57,7 @@
     </el-card>
     <el-card>
       <el-table
+        v-loading="loading"
         :data="tableData"
         style="width: 100%;margin-bottom: 20px;"
         row-key="id"
@@ -93,7 +94,7 @@
 <script>
 import Batch from "@/views/deviceManagement/FF/Batch";
 import Pagination from "@/components/Pagination";
-// import { getList } from "@/api/company/maintain";
+import { getList } from "@/api/company/maintain";
 export default {
   components: {
     Pagination
@@ -143,6 +144,7 @@ export default {
         RegistOnFrom: new Date().getTime(),
         RegistOnTo: new Date().getTime()
       },
+      loading: true,
       page: {
         pageNo: 1,
         resultSize: 10,
@@ -151,12 +153,22 @@ export default {
     };
   },
   created() {
-    // this.getListInfo();
+    this.getListInfo();
   },
   methods: {
     async getListInfo() {
-      // const { data } = await getList(this.companyForm);
-      // console.log(data);
+      try {
+        const { data } = await getList();
+        if (data.status === 200) {
+          this.tableData = data.data;
+          this.loading = false;
+          console.log(data);
+        }
+        console.log(data);
+      } catch (error) {
+        this.$message.error("连接超时！");
+        this.loading = false;
+      }
     },
     // 分页
     pagination() {
