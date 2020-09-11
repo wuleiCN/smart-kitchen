@@ -19,8 +19,8 @@
         stripe
         size="mini"
       >
-        <el-table-column prop="Name" label="报警设备型号" width="180" align="left" />
-        <el-table-column prop="CommandSet" label="指令集" width="180" align="center" />
+        <el-table-column prop="Name" label="报警设备型号" width="380" align="left" />
+        <el-table-column prop="CommandSet" label="指令集" align="center" />
         <el-table-column prop="MaintancePeroid" label="维保周期（月）" align="center" />
         <el-table-column prop="StatusName" label="状态" align="center" />
         <el-table-column #default="{row: data}" label="操作" align="center">
@@ -53,17 +53,20 @@
           />
         </el-form-item>
         <el-form-item label="状态" label-width="100px">
-          <el-radio v-model="deviceFrom.Status" label="1">在用</el-radio>
-          <el-radio v-model="deviceFrom.Status" label="0">停用</el-radio>
+          <el-radio-group v-model="deviceFrom.Status">
+            <el-radio :label="1">在用</el-radio>
+            <el-radio :label="0">停用</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="设备图片" label-width="100px" style="height: 93px;">
           <el-upload
             :file-list="urlList"
             action="https://jsonplaceholder.typicode.com/posts/"
             list-type="picture-card"
+            :limit="3"
             :on-preview="imgCardPreview"
             :on-remove="imgRemove"
-            :on-change="imgUpload"
+            :on-success="imgUpload"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
@@ -74,7 +77,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addFormClose">取 消</el-button>
-        <el-button type="primary" @click="dialogEditDataVisible = false">确 定</el-button>
+        <el-button type="primary" @click="addFormEnter">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 修改 -->
@@ -111,9 +114,11 @@
             :file-list="urlList"
             action="https://jsonplaceholder.typicode.com/posts/"
             list-type="picture-card"
+            :limit="1"
             :on-preview="imgCardPreview"
             :on-remove="imgRemove"
             :on-success="imgUpload"
+            :on-exceed="handleExceed"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
@@ -134,14 +139,21 @@
 </template>
 
 <script>
-import { getAlarmList, updataAlarm } from "@/api/systemSetting/customerDevices.js";
+import {
+  getAlarmList,
+  updataAlarm,
+  addAlarm,
+  deleteAlarm
+} from "@/api/systemSetting/customerDevices.js";
 export default {
   data() {
     return {
       urlList: [],
       tableData: [],
       loading: true,
-      deviceFrom: {},
+      deviceFrom: {
+        Status: 1
+      },
       commandSetValue: "",
       dialogEditDataVisible: false,
       dialogAddDataVisible: false,
@@ -172,38 +184,90 @@ export default {
       if (v.CommandSetName instanceof Array) {
         v.CommandSetName = v.CommandSetName.split(",");
       }
+      if (v.Picture !== "") this.urlList.push({ url: v.Picture });
       this.deviceFrom = v;
       this.dialogEditDataVisible = true;
-      console.log(v);
+      console.log(this.deviceFrom, this.urlList);
     },
     // 删除
     deleteData(v) {
-      console.log(v);
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
+          try {
+            await deleteAlarm(v.Id);
+            this.$message.success("删除成功！");
+            this.getCustomerDevicesData();
+          } catch (error) {
+            this.$message.error("删除失败！");
+            this.getCustomerDevicesData();
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    // 确定新增
+    async addFormEnter() {
+      this.deviceFrom.Picture = this.urlList.length ? this.urlList[0].url : "";
+      this.deviceFrom.StatusName = this.deviceFrom.Status ? "在用" : "停用";
+      try {
+        await addAlarm(this.deviceFrom);
+        this.getCustomerDevicesData();
+        this.deviceFrom = { Status: 1 };
+        this.urlList = [];
+        this.dialogAddDataVisible = false;
+        this.$message.success("添加成功！");
+      } catch (error) {
+        this.getCustomerDevicesData();
+        this.deviceFrom = { Status: 1 };
+        this.urlList = [];
+        this.dialogAddDataVisible = false;
+        this.$message.error("添加失败！");
+      }
     },
     // 取消
     addFormClose() {
-      this.deviceFrom = {};
+      this.deviceFrom = { Status: 1 };
+      this.urlList = [];
       this.dialogAddDataVisible = false;
     },
     // 确定修改
     async editFormEnter() {
       // this.deviceFrom.CommandSetName = this.deviceFrom.CommandSetName.join(",")
-      this.deviceFrom.Picture = this.urlList[0].url
+      // this.urlList.shift();
+      this.deviceFrom.Picture = this.urlList.length ? this.urlList[0].url : "";
+      this.deviceFrom.StatusName = this.deviceFrom.Status ? "在用" : "停用";
       try {
-        await updataAlarm(this.deviceFrom)
-        this.$message.success("更新成功！")
+        await updataAlarm(this.deviceFrom);
+        this.getCustomerDevicesData();
+        this.deviceFrom = { Status: 1 };
+        this.urlList = [];
+        this.dialogEditDataVisible = false;
+        this.$message.success("更新成功！");
       } catch (error) {
-        this.$message.error("更新失败！")
+        this.deviceFrom = { Status: 1 };
+        this.urlList = [];
+        this.dialogEditDataVisible = false;
+        this.$message.error("更新失败！");
       }
       console.log(this.deviceFrom);
     },
     // 取消
     editFormClose() {
-      this.deviceFrom = {};
+      this.deviceFrom = { Status: 1 };
+      this.urlList = [];
       this.dialogEditDataVisible = false;
     },
     // 删除图片
     imgRemove(file, fileList) {
+      this.urlList = this.urlList.filter((v) => v.url !== file.url);
       console.log(file, fileList);
     },
     // 图片预览
@@ -214,8 +278,11 @@ export default {
     },
     // 添加图片
     imgUpload(file, fileList) {
-      this.url.push({ url: fileList.url });
-      console.log(fileList, this.url);
+      this.urlList.push({ url: fileList.url });
+      console.log(fileList, this.urlList);
+    },
+    handleExceed() {
+      this.$message.warning("当前限制选择 1 个文件");
     },
     val(v) {
       console.log(v);

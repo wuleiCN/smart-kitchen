@@ -63,6 +63,7 @@
     </el-card>
     <el-card>
       <el-table
+        v-loading="loading"
         :data="tableData"
         style="width: 100%;margin-bottom: 20px;"
         row-key="id"
@@ -97,12 +98,14 @@
 <script>
 import Batch from "@/views/deviceManagement/FF/Batch";
 import Pagination from "@/components/Pagination";
+import { getMonitorList } from "@/api/orders/monitor";
 export default {
   components: {
     Pagination
   },
   data() {
     return {
+      loading: true,
       pickerOptions: {
         shortcuts: [
           {
@@ -165,7 +168,20 @@ export default {
       }
     };
   },
+  created() {
+    this.getMonitorListInfo();
+  },
   methods: {
+    // 获取工单监控清单
+    async getMonitorListInfo() {
+      try {
+        const data = await getMonitorList();
+        this.loading = false
+        console.log(data);
+      } catch (error) {
+        this.loading = false
+      }
+    },
     // 分页
     pagination() {
       console.log(this.page);
