@@ -63,9 +63,10 @@
             :file-list="urlList"
             action="https://jsonplaceholder.typicode.com/posts/"
             list-type="picture-card"
-            :limit="3"
+            :limit="1"
             :on-preview="imgCardPreview"
             :on-remove="imgRemove"
+            :on-exceed="handleExceed"
             :on-success="imgUpload"
           >
             <i class="el-icon-plus"></i>

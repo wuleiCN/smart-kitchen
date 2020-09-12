@@ -62,7 +62,7 @@
 </template>
 
 <script>
-// import { getToken } from "@/utils/auth.js"
+// import { getSession } from "@/utils/auth.js"
 export default {
   name: "Sidebar",
   data() {
@@ -77,10 +77,12 @@ export default {
     }
   },
   created() {
-    this.routes = [];
-    // this.routes = getToken("ROUTES_KEY")
-    this.routes = this.$router.options.routes;
-    this.routes = this.routes.slice(2);
+    // this.routes = [];
+    this.routes = this.$store.state.routers
+    console.log(this.$store.state.routers);
+    // this.routes = getSession("ROUTES_KEY")
+    // this.routes = this.$router.options.routes;
+    // this.routes = this.routes.slice(2);
   },
   methods: {}
 };

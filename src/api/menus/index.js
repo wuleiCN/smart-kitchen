@@ -2,7 +2,7 @@ import request from "@/utils/request"
 
 export const getMenus = () => {
   return request({
-    url: "api/Menus/List",
+    url: "api/Menus/GetRoutes",
     method: "get"
   })
 }

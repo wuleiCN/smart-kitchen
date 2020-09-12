@@ -23,7 +23,7 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>个人中心</el-dropdown-item>
               <span style="display:block;">
-                <el-dropdown-item divided>退出登录</el-dropdown-item>
+                <el-dropdown-item divided @click="logOut">退出登录</el-dropdown-item>
               </span>
             </el-dropdown-menu>
           </el-dropdown>
@@ -59,6 +59,8 @@
 import Sidebar from "./components/Sidebar.vue";
 // import { getMenus } from "@/api/menus";
 import { mapState } from "vuex";
+import { removeSession } from "@/utils/auth.js"
+import Cookies from "js-cookie";
 export default {
   name: "Layout",
   components: {
@@ -71,14 +73,20 @@ export default {
     ...mapState(["userInfo"])
   },
   created() {
-    this.getMenusList()
-    console.log(this.$route);
-    console.log(this.userInfo);
+    this.getMenusList();
+    console.log(this.$route, this.userInfo);
+    console.log(this.$router.options.routerMap);
   },
   methods: {
     async getMenusList() {
       // const data = await getMenus();
       // console.log(data);
+    },
+    logOut() {
+      removeSession("USER_INFO");
+      Cookies.remove("TOKEN_KEY");
+      location.reload();
+      console.log("out");
     }
   }
 };

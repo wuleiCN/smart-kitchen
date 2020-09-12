@@ -41,7 +41,7 @@
 <script>
 import { login, getUser } from "@/api/Login.js";
 import Cookies from "js-cookie";
-// import { setToken } from "@/utils/auth.js";
+import { setSession } from "@/utils/auth.js";
 // import tk from "@/utils/token.js";
 export default {
   data() {
@@ -80,9 +80,10 @@ export default {
           Cookies.set("TOKEN_KEY", res.Token);
           const { data: info } = await getUser();
           // setToken("TOKEN_KEY", res.Token);
-          this.$store.commit("getUserInfo", info)
+          setSession("USER_INFO", info)
           this.$store.dispatch("getRoutesSync")
-          console.log(info, res, this.$router.options.routes);
+          // this.$store.dispatch("updateLoadMenus", true)
+          console.log(info, res);
           this.$router.push({ path: "/" });
         } else {
           console.log("error submit!!");

@@ -7,4 +7,10 @@ export const getAlarmList = () => {
     method: "get"
   })
 }
-
+// 下载报警设备批量注册模板文件
+export const getBatchTemplate = () => {
+  return request({
+    url: "api/Alarms/GetBatchRegistTemplate",
+    method: "get"
+  })
+}

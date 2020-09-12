@@ -9,20 +9,20 @@
       </el-steps>
       <!-- 第一步 -->
       <el-form v-if="active === 0">
-        <el-form-item label="公司名称" label-width="120px">
+        <el-form-item label="生产批次" label-width="120px">
           <el-input autocomplete="off" />
         </el-form-item>
-        <el-form-item label="详细地址" label-width="120px">
-          <el-select v-model="value">
+        <el-form-item label="设备型号" label-width="120px">
+          <el-select v-model="alarmValue">
             <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
+              v-for="item in alarmList"
+              :key="item.Id"
+              :label="item.Name"
               :value="item.value"
             />
           </el-select>
         </el-form-item>
-        <el-form-item v-model="fileValue" label="详细地址" label-width="120px">
+        <el-form-item v-model="fileValue" label="批量文件" label-width="120px">
           <div>
             <el-input
               v-model="fileValue"
@@ -30,12 +30,7 @@
               :style="{width: 380 -(fileValue ? 89*2 : 89) +'px'}"
               :disabled="true"
             />
-            <el-button
-              v-if="fileValue"
-              type="danger"
-              icon="el-icon-delete"
-              @click="remvoeFile"
-            >删除</el-button>
+            <el-button v-if="fileValue" type="danger" icon="el-icon-delete" @click="remvoeFile">删除</el-button>
             <!-- <el-button type="success" icon="el-icon-folder-opened">选择</el-button> -->
             <upload-excel-component :on-success="handleSuccess" />
           </div>
@@ -46,36 +41,50 @@
       </el-form>
       <!-- 第二步 -->
       <el-form v-if="active === 1">
-        <el-form-item label="统一社会信息码" label-width="120px">
-          <el-input autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="开户银行" label-width="120px">
-          <el-input autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="银行账号" label-width="120px">
-          <el-input autocomplete="off" />
-        </el-form-item>
+        <el-table
+          :data="tableData"
+          style="width: 100%;margin-bottom: 20px;"
+          row-key="id"
+          border
+          size="mini"
+        >
+          <el-table-column prop="date" label="设备编码" align="left" />
+          <el-table-column prop="name" label="设备型号编码" width="240" align="center" />
+          <el-table-column prop="name" label="生产批次" align="center" />
+          <el-table-column prop="name" label="型号名称" align="center" />
+        </el-table>
+        <Pagination
+          class="pagination"
+          :page.sync="page.pageNo"
+          :total="page.total"
+          :limit.sync="page.resultSize"
+          @pagination="pagination"
+        />
       </el-form>
       <!-- 第三步 -->
       <el-form v-if="active === 2">
-        <el-form-item label="法人代表" label-width="120px">
-          <el-input autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="联系电话" label-width="120px">
-          <el-input autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="电子邮箱" label-width="120px">
-          <el-input autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="系统管理员" label-width="120px">
-          <el-input autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="联系电话" label-width="120px">
-          <el-input autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="电子邮箱" label-width="120px">
-          <el-input autocomplete="off" />
-        </el-form-item>
+        <el-progress :text-inside="true" :stroke-width="24" :percentage="100" status="success" />
+      </el-form>
+      <el-form v-if="active === 3">
+        <el-table
+          :data="tableData"
+          style="width: 100%;margin-bottom: 20px;"
+          row-key="id"
+          border
+          size="mini"
+        >
+          <el-table-column prop="date" label="设备编码" align="left" />
+          <el-table-column prop="name" label="设备型号编码" width="240" align="center" />
+          <el-table-column prop="name" label="生产批次" align="center" />
+          <el-table-column prop="name" label="型号名称" align="center" />
+        </el-table>
+        <Pagination
+          class="pagination"
+          :page.sync="page.pageNo"
+          :total="page.total"
+          :limit.sync="page.resultSize"
+          @pagination="pagination"
+        />
       </el-form>
       <el-button class="step_btn" @click="next">上一步</el-button>
       <el-button v-if="active < 3" class="step_btn" @click="prev">下一步</el-button>
@@ -86,29 +95,46 @@
 
 <script>
 import UploadExcelComponent from "@/components/UploadExcel/index";
+import Pagination from "@/components/Pagination";
+// import { getBatchTemplate } from "@/api/device/LBJ.js";
+import { getAlarmList } from "@/api/systemSetting/customerDevices";
 export default {
   components: {
-    UploadExcelComponent
+    UploadExcelComponent,
+    Pagination
   },
   data() {
     return {
       active: 0,
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        }
-      ],
-      value: "",
+      alarmList: [],
+      alarmValue: "",
       file: false,
-      fileValue: ""
+      fileValue: "",
+      tableData: [],
+      page: {
+        pageNo: 1,
+        resultSize: 10,
+        total: 0
+      }
     };
   },
+  created() {
+    this.getAlarmListInfo();
+  },
   methods: {
+    // 获取灭火设备型号
+    async getAlarmListInfo() {
+      try {
+        const data = await getAlarmList();
+        this.alarmList = data.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    // 分页
+    pagination() {
+      console.log(this.page);
+    },
     prev() {
       if (this.active++ >= 2) {
         this.active = 3;
@@ -132,14 +158,21 @@ export default {
     remvoeFile() {
       this.fileValue = null;
     },
+    // 模板下载
     downloadTemplate() {
       import("@/vendor/Export2Excel.js").then((excel) => {
+        const tMultiHeader = [
+          ["注：请严格按模板示例填写批量注册设备信息", "", ""]
+        ];
         const tHeader = ["设备编码", "通讯号码", "备注"];
         const data = [];
+        const merges = ["A1:C1"];
         excel.export_json_to_excel({
+          multiHeader: tMultiHeader,
           header: tHeader,
           data,
-          filename: "excel-list",
+          merges,
+          filename: "报警设备批量注册-20200912",
           autoWidth: true,
           bookType: "xlsx"
         });
@@ -173,6 +206,16 @@ export default {
       .step_btn {
         transform: translateX(550px);
       }
+    }
+    .pagination {
+      float: none !important;
+    }
+    .el-table th,
+    .el-table tr {
+      background-color: #e6e6e6;
+    }
+    .el-progress {
+      margin: 25px 20px;
     }
   }
 }

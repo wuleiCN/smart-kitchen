@@ -6,6 +6,8 @@ import Layout from "@/layout/index"
 import Empty from "@/components/Empty"
 import Cookies from "js-cookie";
 import store from "../store";
+import { getMenus } from "@/api/menus"
+import { removeSession } from "@/utils/auth.js"
 
 const whiteList = ["/login"];
 NProgress.configure({ showSpinner: false })
@@ -16,19 +18,23 @@ router.beforeEach(async (to, from, next) => {
       next({ path: "/" })
       NProgress.done()
     } else {
-      const route = await store.state.routes
-      const hasRouters = route && route.route.length > 0
-      console.log(hasRouters, route);
-      if (hasRouters) {
-        next()
+      if (!store.state.userInfo) {
+        store.dispatch("GetInfo").then(res => {
+          console.log(store.state.userInfo);
+          routerGo(to, next)
+        }).catch(err => {
+          console.log(err);
+          removeSession("USER_INFO")
+          Cookies.remove("TOKEN_KEY")
+          location.reload()
+        })
+      } else if (store.state.loadMenus) {
+        store.dispatch("updateLoadMenus", false).then(res => {
+          console.log("menus");
+        })
+        routerGo(to, next)
       } else {
-        try {
-          routerGo(to, next).catch(err => { console.log(err); })
-          next()
-        } catch (error) {
-          Message.warning("您还没有登录，请求登录后再访问该页面！")
-          return next(`/login?redirect=${to.fullPath}`) // 否则全部重定向到登录页
-        }
+        next()
       }
     }
   } else {
@@ -41,13 +47,18 @@ router.beforeEach(async (to, from, next) => {
   }
 })
 async function routerGo(to, next) {
-  const accessRoutes = filterAsyncRouter(await store.state.routes)
-  // router.addRoutes(accessRoutes)
-  console.log(accessRoutes);
-  next({ ...to, replace: true })
+  getMenus().then(data => {
+    console.log(data.data);
+    const accessRoutes = filterAsyncRouter(data.data.data)
+    store.dispatch("getRoutesSync", accessRoutes).then(() => {
+      router.addRoutes(accessRoutes)
+      console.log(accessRoutes, 1);
+      next({ ...to, replace: true })
+    })
+  })
 }
 function filterAsyncRouter(routers) { // 遍历后台传来的路由字符串，转换为组件对象
-  return routers.route.filter(route => {
+  return routers.filter(route => {
     if (route.component) {
       if (route.component === "Layout") { // Layout组件特殊处理
         route.component = Layout
