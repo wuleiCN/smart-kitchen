@@ -99,7 +99,7 @@ export default {
       tableData: [],
       routes: [],
       treeProps: {
-        label: "name",
+        label: "meta",
         children: "children"
       },
       editForm: {
@@ -114,8 +114,9 @@ export default {
   },
   created() {
     this.routes = [];
-    this.routes = this.$router.options.routes;
-    this.routes = this.routes.slice(2);
+    this.routes = this.$store.state.routers
+    this.routes = this.routes.slice(3);
+    console.log(this.$store.state.routers);
   },
   methods: {
     editData(v) {

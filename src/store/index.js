@@ -9,8 +9,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     userInfo: getSession("USER_INFO"),
-    // routers: getSession("ROUTES_KEY"),
-    routers: [],
+    routers: getSession("ROUTES_KEY"),
+    // routers: [],
     originRouters: [],
     loadMenus: false
   },

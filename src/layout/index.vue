@@ -37,12 +37,9 @@
           <el-main>
             <el-breadcrumb separator="/">
               <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-              <el-breadcrumb-item
-                v-if="$route.name !== 'Home'"
-              >{{ $route.matched[$route.matched.length-1].parent.meta.title }}</el-breadcrumb-item>
-              <el-breadcrumb-item
-                v-if="$route.matched[$route.matched.length-1].parent.parent !== undefined"
-              >{{ $route.meta.title }}</el-breadcrumb-item>
+              <el-breadcrumb-item v-if="classA">{{ classA }}</el-breadcrumb-item>
+              <el-breadcrumb-item v-if="classB">{{ classB }}</el-breadcrumb-item>
+              <el-breadcrumb-item v-if="classC">{{ classC }}</el-breadcrumb-item>
             </el-breadcrumb>
             <div class="route_name">
               <h1>{{ $route.meta.title }}</h1>
@@ -59,7 +56,7 @@
 import Sidebar from "./components/Sidebar.vue";
 // import { getMenus } from "@/api/menus";
 import { mapState } from "vuex";
-import { removeSession } from "@/utils/auth.js"
+import { removeSession } from "@/utils/auth.js";
 import Cookies from "js-cookie";
 export default {
   name: "Layout",
@@ -67,15 +64,28 @@ export default {
     Sidebar
   },
   data() {
-    return {};
+    return {
+      classA: null,
+      classB: null,
+      classC: null,
+      cuurRoute: this.$route.meta.title
+    };
   },
   computed: {
     ...mapState(["userInfo"])
   },
+  watch: {
+    cuurRoute: {
+      handle() {
+        return this.getPath();
+      },
+      immediate: true,
+      deep: true
+    }
+  },
   created() {
     this.getMenusList();
     console.log(this.$route, this.userInfo);
-    console.log(this.$router.options.routerMap);
   },
   methods: {
     async getMenusList() {
@@ -87,6 +97,17 @@ export default {
       Cookies.remove("TOKEN_KEY");
       location.reload();
       console.log("out");
+    },
+    getPath() {
+      const route = this.$route;
+      if (route.name !== "Home" && route.matched.length <= 2) {
+        this.classA = route.matched[0].meta.title;
+        this.classB = route.meta.title;
+      } else {
+        this.classA = route.matched[0].meta.title;
+        this.classB = route.matched[1].meta.title;
+        this.classC = route.meta.title;
+      }
     }
   }
 };

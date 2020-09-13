@@ -58,7 +58,6 @@ export default {
       const { data: res } = await msgCount();
       this.count = res
       await dataInit();
-      console.log(res);
     }
   }
 };

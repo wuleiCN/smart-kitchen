@@ -42,6 +42,7 @@
 import { login, getUser } from "@/api/Login.js";
 import Cookies from "js-cookie";
 import { setSession } from "@/utils/auth.js";
+import { getMenus } from "@/api/menus";
 // import tk from "@/utils/token.js";
 export default {
   data() {
@@ -80,10 +81,13 @@ export default {
           Cookies.set("TOKEN_KEY", res.Token);
           const { data: info } = await getUser();
           // setToken("TOKEN_KEY", res.Token);
-          setSession("USER_INFO", info)
-          this.$store.dispatch("getRoutesSync")
-          // this.$store.dispatch("updateLoadMenus", true)
-          console.log(info, res);
+          getMenus().then((data) => {
+            // this.$store.dispatch("getRoutesSync");
+            setSession("ROUTES_KEY", data.data);
+          });
+          setSession("USER_INFO", info);
+          this.$store.dispatch("updateLoadMenus", true);
+          console.log(info, res, this.$store.state.loadMenus);
           this.$router.push({ path: "/" });
         } else {
           console.log("error submit!!");

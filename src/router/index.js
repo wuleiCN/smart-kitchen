@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 import store from "../store";
 import { getMenus } from "@/api/menus"
 import { removeSession } from "@/utils/auth.js"
+import { setSession } from "@/utils/auth.js"
 
 const whiteList = ["/login"];
 NProgress.configure({ showSpinner: false })
@@ -32,9 +33,13 @@ router.beforeEach(async (to, from, next) => {
         store.dispatch("updateLoadMenus", false).then(res => {
           console.log("menus");
         })
-        routerGo(to, next)
-      } else {
         next()
+      } else {
+        store.dispatch("updateLoadMenus", true).then(res => {
+          console.log("menus");
+        })
+        console.log(store.state.userInfo, store.state.loadMenus);
+        routerGo(to, next)
       }
     }
   } else {
@@ -49,6 +54,7 @@ router.beforeEach(async (to, from, next) => {
 async function routerGo(to, next) {
   getMenus().then(data => {
     console.log(data.data);
+    setSession("ROUTES_KEY", data.data)
     const accessRoutes = filterAsyncRouter(data.data.data)
     store.dispatch("getRoutesSync", accessRoutes).then(() => {
       router.addRoutes(accessRoutes)
@@ -76,7 +82,7 @@ function filterAsyncRouter(routers) { // 遍历后台传来的路由字符串，
   })
 }
 function loadView(view) {
-  return (resolve) => require([`@/views/${view}`], resolve)
+  return (resolve) => require([`@/views${view}`], resolve)
 }
 router.afterEach((to, from) => {
   NProgress.done()
