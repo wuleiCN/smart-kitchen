@@ -39,7 +39,7 @@ export default {
     generateData({ header, results, nameFlie }) {
       this.excelData.header = header;
       this.excelData.results = results;
-      this.excelData.nameFlie = nameFlie
+      this.excelData.nameFlie = nameFlie;
       this.onSuccess && this.onSuccess(this.excelData);
     },
     handleDrop(e) {
@@ -96,9 +96,12 @@ export default {
           const workbook = XLSX.read(data, { type: "array" });
           const firstSheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[firstSheetName];
-          const header = this.getHeaderRow(worksheet);
-          const results = XLSX.utils.sheet_to_json(worksheet);
-          const nameFlie = rawFile.name
+          // const header = this.getHeaderRow(worksheet);
+          const header = ["设备编码", "通讯号码", "备注"]
+          const R = XLSX.utils.sheet_to_json(worksheet, { defval: "", header: ["设备编码", "通讯号码", "备注"] });
+          const results = R.slice(2)
+          const nameFlie = rawFile.name;
+          console.log(worksheet, results);
           this.generateData({ header, results, nameFlie });
           this.loading = false;
           resolve();

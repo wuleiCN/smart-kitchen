@@ -83,6 +83,7 @@ export default {
           // setToken("TOKEN_KEY", res.Token);
           getMenus().then((data) => {
             // this.$store.dispatch("getRoutesSync");
+            console.log(data);
             setSession("ROUTES_KEY", data.data);
           });
           setSession("USER_INFO", info);

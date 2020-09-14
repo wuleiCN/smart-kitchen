@@ -65,6 +65,7 @@
       <el-form v-if="active === 2">
         <el-progress :text-inside="true" :stroke-width="24" :percentage="100" status="success" />
       </el-form>
+      <!-- 第四步 -->
       <el-form v-if="active === 3">
         <el-table
           :data="tableData"

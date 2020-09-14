@@ -12,14 +12,17 @@
       <el-table
         :data="tableData"
         style="width: 100%;margin-bottom: 20px;"
-        row-key="id"
+        row-key="meta.title"
         border
         size="mini"
         :tree-props="{children: 'children', hasChildren: true}"
       >
-        <el-table-column prop="date" label="日期" width="180" align="left" />
-        <el-table-column prop="name" label="姓名" width="180" align="center" />
-        <el-table-column prop="address" label="地址" align="center" />
+        <el-table-column prop="meta.title" label="名称" width="180" align="left" />
+        <el-table-column type="index" label="序号" width="180" align="center" />
+        <el-table-column prop="meta.icon" label="图标" align="center" />
+        <el-table-column prop="path" label="页面地址" align="center" />
+        <el-table-column prop="address" label="禁用" align="center" />
+        <el-table-column prop="address" label="菜单类别" align="center" />
         <el-table-column #default="{row: data}" label="操作" align="center">
           <el-button size="mini" icon="el-icon-plus" type="text" @click="addData(data)">添加</el-button>
           <el-button size="mini" icon="el-icon-edit" type="text" @click="editData(data)">修改</el-button>
@@ -27,57 +30,15 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog title="增加" :visible.sync="addForm.dialogAddDataVisible" @close="addFormClose">
-      <el-form>
-        <el-form-item label="序号" label-width="100px">
-          <el-input autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="名称" label-width="100px">
-          <el-input autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="代码" label-width="100px">
-          <el-input autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="图标" label-width="100px">
-          <el-select v-model="addForm.value" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="网页地址" label-width="100px">
-          <el-input autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="禁用" label-width="100px">
-          <el-switch
-            v-model="addForm.disable"
-            style="display: block"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            :active-text="addForm.disable ? '是' : '否'"
-            @change="isDisable"
-          />
-        </el-form-item>
-        <el-form-item label="菜单类别" label-width="100px">
-          <el-radio v-model="addForm.menuCag" label="1">备选项</el-radio>
-          <el-radio v-model="addForm.menuCag" label="2">备选项</el-radio>
-          <el-radio v-model="addForm.menuCag" label="3">备选项</el-radio>
-        </el-form-item>
-        <el-form-item label="菜单分组" label-width="100px">
-          <el-radio v-model="addForm.menuGroup" label="1">备选项</el-radio>
-          <el-radio v-model="addForm.menuGroup" label="2">备选项</el-radio>
-          <el-radio v-model="addForm.menuGroup" label="3">备选项</el-radio>
-        </el-form-item>
-      </el-form>
+    <!-- 添加 -->
+    <el-dialog title="增加" :visible.sync="dialogAddDataVisible" @close="addFormClose">
       <div slot="footer" class="dialog-footer">
         <el-button @click="addFormClose">取 消</el-button>
-        <el-button type="primary" @click="addForm.dialogAddDataVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogAddDataVisible = false">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="修改" :visible.sync="editForm.dialogEditDataVisible" @close="editFormClose">
+    <!-- 修改 -->
+    <el-dialog title="修改" :visible.sync="dialogEditDataVisible" @close="editFormClose">
       <el-form>
         <el-form-item label="序号" label-width="100px">
           <el-input autocomplete="off" />
@@ -89,7 +50,7 @@
           <el-input autocomplete="off" />
         </el-form-item>
         <el-form-item label="图标" label-width="100px">
-          <el-select v-model="editForm.value" placeholder="请选择">
+          <el-select v-model="menuForm.value" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -103,28 +64,28 @@
         </el-form-item>
         <el-form-item label="禁用" label-width="100px">
           <el-switch
-            v-model="editForm.disable"
+            v-model="menuForm.disable"
             style="display: block"
             active-color="#13ce66"
             inactive-color="#ff4949"
-            :active-text="editForm.disable ? '是' : '否'"
+            :active-text="menuForm.disable ? '是' : '否'"
             @change="isDisable"
           />
         </el-form-item>
         <el-form-item label="菜单类别" label-width="100px">
-          <el-radio v-model="editForm.menuCag" label="1">备选项</el-radio>
-          <el-radio v-model="editForm.menuCag" label="2">备选项</el-radio>
-          <el-radio v-model="editForm.menuCag" label="3">备选项</el-radio>
+          <el-radio v-model="menuForm.menuCag" label="1">菜单项</el-radio>
+          <el-radio v-model="menuForm.menuCag" label="2">按钮</el-radio>
+          <el-radio v-model="menuForm.menuCag" label="3">功能组</el-radio>
         </el-form-item>
         <el-form-item label="菜单分组" label-width="100px">
-          <el-radio v-model="editForm.menuGroup" label="1">备选项</el-radio>
-          <el-radio v-model="editForm.menuGroup" label="2">备选项</el-radio>
-          <el-radio v-model="editForm.menuGroup" label="3">备选项</el-radio>
+          <el-radio v-model="menuForm.menuGroup" label="1">超级Web后台</el-radio>
+          <el-radio v-model="menuForm.menuGroup" label="2">公司Web后台</el-radio>
+          <el-radio v-model="menuForm.menuGroup" label="3">客户Web后台</el-radio>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="editFormClose">取 消</el-button>
-        <el-button type="primary" @click="editForm.dialogEditDataVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogEditDataVisible = false">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -134,88 +95,11 @@
 export default {
   data() {
     return {
-      tableData: [
-        {
-          id: 2,
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄",
-          children: [
-            {
-              id: 21,
-              date: "2016-05-01",
-              name: "王小虎",
-              address: "上海市普陀区金沙江路 1519 弄"
-            },
-            {
-              id: 22,
-              date: "2016-05-01",
-              name: "王小虎",
-              address: "上海市普陀区金沙江路 1519 弄"
-            }
-          ]
-        },
-        {
-          id: 3,
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄",
-          children: [
-            {
-              id: 31,
-              date: "2016-05-01",
-              name: "王小虎",
-              address: "上海市普陀区金沙江路 1519 弄"
-            },
-            {
-              id: 32,
-              date: "2016-05-01",
-              name: "王小虎",
-              address: "上海市普陀区金沙江路 1519 弄"
-            }
-          ]
-        },
-        {
-          id: 4,
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄",
-          children: [
-            {
-              id: 41,
-              date: "2016-05-01",
-              name: "王小虎",
-              address: "上海市普陀区金沙江路 1519 弄"
-            },
-            {
-              id: 42,
-              date: "2016-05-01",
-              name: "王小虎",
-              address: "上海市普陀区金沙江路 1519 弄"
-            }
-          ]
-        },
-        {
-          id: 5,
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄",
-          children: [
-            {
-              id: 51,
-              date: "2016-05-01",
-              name: "王小虎",
-              address: "上海市普陀区金沙江路 1519 弄"
-            },
-            {
-              id: 52,
-              date: "2016-05-01",
-              name: "王小虎",
-              address: "上海市普陀区金沙江路 1519 弄"
-            }
-          ]
-        }
-      ],
+      tableData: [],
+      menuForm: {
+        menuCag: 1,
+        menuGroup: 1
+      },
       options: [
         {
           value: "选项1",
@@ -226,44 +110,35 @@ export default {
           label: "双皮奶"
         }
       ],
-      addForm: {
-        value: "",
-        dialogAddDataVisible: false,
-        disable: true,
-        menuCag: "1",
-        menuGroup: "1"
-      },
-      editForm: {
-        value: "",
-        dialogEditDataVisible: false,
-        disable: true,
-        menuCag: "1",
-        menuGroup: "1"
-      }
+      value: "",
+      dialogAddDataVisible: false,
+      dialogEditDataVisible: false
     };
+  },
+  created() {
+    let routes = this.$store.state.routers;
+    routes = routes.slice(2)
+    this.tableData = routes;
   },
   methods: {
     addData(v) {
-      this.addForm.dialogAddDataVisible = true;
+      this.dialogAddDataVisible = true;
       console.log(v);
     },
     editData(v) {
-      this.editForm.dialogEditDataVisible = true;
+      this.menuForm = v
+      this.dialogEditDataVisible = true;
       console.log(v);
     },
     deleteData(v) {
       console.log(v);
     },
-    isDisable() {
-      console.log(this.addForm.disable);
-    },
+    isDisable() {},
     addFormClose() {
-      Object.assign(this.$data.addForm, this.$options.data().addForm);
-      this.addForm.dialogAddDataVisible = false;
+      this.dialogAddDataVisible = false;
     },
     editFormClose() {
-      Object.assign(this.$data.editForm, this.$options.data().editForm);
-      this.editForm.dialogEditDataVisible = false;
+      this.dialogEditDataVisible = false;
     }
   }
 };

@@ -39,7 +39,7 @@
               <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
               <el-breadcrumb-item v-if="classA">{{ classA }}</el-breadcrumb-item>
               <el-breadcrumb-item v-if="classB">{{ classB }}</el-breadcrumb-item>
-              <el-breadcrumb-item v-if="classC">{{ classC }}</el-breadcrumb-item>
+              <el-breadcrumb-item v-if="classC && $route.matched.length > 2">{{ classC }}</el-breadcrumb-item>
             </el-breadcrumb>
             <div class="route_name">
               <h1>{{ $route.meta.title }}</h1>
@@ -67,17 +67,17 @@ export default {
     return {
       classA: null,
       classB: null,
-      classC: null,
-      cuurRoute: this.$route.meta.title
+      classC: null
     };
   },
   computed: {
     ...mapState(["userInfo"])
   },
   watch: {
-    cuurRoute: {
-      handle() {
-        return this.getPath();
+    $route: {
+      handler(v, o) {
+        this.getPath();
+        console.log(v, o);
       },
       immediate: true,
       deep: true
@@ -85,7 +85,7 @@ export default {
   },
   created() {
     this.getMenusList();
-    console.log(this.$route, this.userInfo);
+    console.log(this.$router, this.userInfo);
   },
   methods: {
     async getMenusList() {
@@ -103,6 +103,7 @@ export default {
       if (route.name !== "Home" && route.matched.length <= 2) {
         this.classA = route.matched[0].meta.title;
         this.classB = route.meta.title;
+        console.log(this.classC);
       } else {
         this.classA = route.matched[0].meta.title;
         this.classB = route.matched[1].meta.title;

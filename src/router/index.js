@@ -63,8 +63,9 @@ async function routerGo(to, next) {
     })
   })
 }
-function filterAsyncRouter(routers) { // 遍历后台传来的路由字符串，转换为组件对象
+export function filterAsyncRouter(routers) { // 遍历后台传来的路由字符串，转换为组件对象
   return routers.filter(route => {
+    delete route.redirect
     if (route.component) {
       if (route.component === "Layout") { // Layout组件特殊处理
         route.component = Layout

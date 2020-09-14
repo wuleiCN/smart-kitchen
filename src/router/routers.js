@@ -74,10 +74,9 @@ export const routerMap = [
   // {
   //   path: "/systemManage",
   //   component: Layout,
-  //   hidden: true,
-  //   redirect: "false",
+  //   hidden: false,
   //   name: "SystemManage",
-  //   meta: { title: "系统管理", icon: "el-icon-setting" },
+  //   meta: { title: "系统管理", icon: "el-icon-setting", menuCategory: "菜单类别", menuGroup: "菜单分组" },
   //   children: [
   //     {
   //       path: "role",
