@@ -2,6 +2,7 @@ module.exports = {
   // pabulicPath:process.env.NODE_ENV === 'production' ? '' : '',
   devServer: {
     port: "8080",
+    // host: " 113.240.150.198",
     // https:false,
     open: true,
     overlay: {

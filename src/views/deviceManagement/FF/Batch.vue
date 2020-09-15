@@ -62,7 +62,7 @@
           :text-inside="true"
           :stroke-width="24"
           :percentage="progressPercent"
-          status="success"
+          :status="status ? 'success' : 'exception'"
         />
       </el-form>
       <!-- 第四步 -->
@@ -122,6 +122,7 @@ export default {
       tableData: [],
       BatchFile: [],
       progressPercent: 0,
+      status: true,
       page: {
         pageNo: 1,
         resultSize: 10,
@@ -186,17 +187,33 @@ export default {
           }
           if (this.active === 2) {
             console.log(this.active);
+            this.status = true;
             var timer = setInterval(() => {
-              this.progressPercent === 90 || this.progressPercent * 2;
+              let i = 5;
+              i < 10 ? i++ : (i = 1);
+              // (this.progressPercent < 90) || (this.progressPercent = this.progressPercent + 5);
+              this.progressPercent < 89
+                ? (this.progressPercent = this.progressPercent + i)
+                : (this.progressPercent = 90);
+              console.log(this.progressPercent);
             }, 300);
+            console.log(this.progressPercent);
             registerAlarmDevice(this.fireForm)
               .then((data) => {
-                clearInterval(timer);
-                this.progressPercent = 100;
-                console.log(data);
+                if (data.data.success) {
+                  clearInterval(timer);
+                  this.progressPercent = 100;
+                  console.log(data);
+                } else {
+                  clearInterval(timer);
+                  this.progressPercent = 90
+                  this.status = false
+                  this.$message.error(data.data.message)
+                }
               })
               .catch((err) => {
                 clearInterval(timer);
+                this.status = false;
                 console.log(err);
               });
           }

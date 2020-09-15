@@ -13,7 +13,7 @@
       <el-table
         :data="tableData"
         style="width: 100%;font-size: 13px;"
-        row-key="id"
+        row-key="$treeNodeId"
         border
         stripe
         size="mini"
@@ -99,7 +99,9 @@ export default {
       tableData: [],
       routes: [],
       treeProps: {
-        label: "meta",
+        label: (data) => {
+          return data.meta.title;
+        },
         children: "children"
       },
       editForm: {
@@ -114,7 +116,7 @@ export default {
   },
   created() {
     this.routes = [];
-    this.routes = this.$store.state.routers
+    this.routes = this.$store.state.routers;
     this.routes = this.routes.slice(3);
     console.log(this.$store.state.routers);
   },

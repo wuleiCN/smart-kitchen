@@ -97,6 +97,7 @@
 <script>
 import Batch from "@/views/deviceManagement/FF/Batch";
 import Pagination from "@/components/Pagination";
+// import { getFiresByQuery } from "@/api/device/FF.js";
 export default {
   components: {
     Pagination
@@ -154,7 +155,19 @@ export default {
       }
     };
   },
+  created() {
+    // this.getFiresList()
+  },
   methods: {
+    // 灭火设备信息列表
+    // async getFiresList() {
+    //   const data = await getFiresByQuery({
+    //     offset: this.page.resultSize,
+    //     limit: (this.page.pageNo - 1) * this.page.resultSize,
+    //     order: "asc"
+    //   });
+    //   console.log(data);
+    // },
     // 分页
     pagination() {
       console.log(this.page);

@@ -51,9 +51,9 @@
               size="small"
               icon="el-icon-search"
               style="margin-left: 30px;"
-              @click="get"
+              @click="getAlarmByQueryList"
             >查 询</el-button>
-            <el-button type="success" size="small" icon="el-icon-plus" @click="get">设备注册</el-button>
+            <el-button type="success" size="small" icon="el-icon-plus">设备注册</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -66,12 +66,16 @@
         border
         size="mini"
       >
-        <el-table-column prop="date" label="设备编码" align="left" />
-        <el-table-column prop="name" label="设备型号编码" width="240" align="center" />
-        <el-table-column prop="name" label="生产批次" align="center" />
-        <el-table-column prop="name" label="型号名称" align="center" />
-        <el-table-column prop="name" label="状态" align="center" />
-        <el-table-column prop="name" label="注册日期" align="center" />
+        <el-table-column prop="Code" label="设备编码" align="left" />
+        <el-table-column prop="ComNumber" label="设备型号编码" width="240" align="center" />
+        <el-table-column prop="BatchNo" label="生产批次" align="center" />
+        <el-table-column prop="AlertDeviceModel" label="型号名称" align="center" />
+        <el-table-column prop="StatusName" label="状态" align="center" />
+        <el-table-column prop="RegistOn" label="注册日期" align="center">
+          <template #default="{row: time}">
+            {{ time.RegistOn }}
+          </template>
+        </el-table-column>
         <el-table-column #default="{row: data}" label="操作" align="center">
           <el-button size="mini" icon="el-icon-edit" type="text" @click="editData(data)">修改</el-button>
           <el-button size="mini" icon="el-icon-delete" type="text" @click="deleteData(data)">删除</el-button>
@@ -88,9 +92,8 @@
 </template>
 
 <script>
-import Batch from "@/views/deviceManagement/FF/Batch";
 import Pagination from "@/components/Pagination";
-// import { getAlarmList } from "@/api/device/LBJ.js";
+import { getAlarmDeviceList, getAlarmByQuery } from "@/api/device/LBJ.js";
 export default {
   components: {
     Pagination
@@ -137,12 +140,33 @@ export default {
       }
     };
   },
-  created() {},
+  created() {
+    this.getAlarmList();
+  },
   methods: {
     // 报警设备列表
-    async getAlarmDeviceList() {
-      // const data = await getAlarmList();
-      // console.log(data);
+    async getAlarmList() {
+      const data = await getAlarmDeviceList({
+        offset: this.page.pageNo * this.page.resultSize,
+        limit: this.page.resultSize,
+        order: "asc"
+      });
+      console.log(data);
+    },
+    // 条件查询
+    async getAlarmByQueryList() {
+      try {
+        const { data: res } = await getAlarmByQuery({
+          offset: this.page.resultSize,
+          limit: 10,
+          order: "asc"
+        });
+        this.tableData = res.rows
+        this.page.total = res.total
+        console.log(res);
+      } catch (error) {
+        console.log(error);
+      }
     },
     // 分页
     pagination() {
@@ -156,9 +180,6 @@ export default {
     },
     val(v) {
       console.log(v);
-    },
-    get() {
-      console.log(Batch);
     }
   }
 };
