@@ -196,7 +196,7 @@
 <script>
 import {
   getFireList,
-  getAlarmList,
+  getAlarmModelList,
   updataFire,
   addFire,
   deleteFire
@@ -225,7 +225,7 @@ export default {
     // 获取报警设备型号列表
     async getAlarmDevicesList() {
       try {
-        const data = await getAlarmList();
+        const data = await getAlarmModelList();
         this.AlarmDevicesList = data.data;
         console.log(data);
       } catch (error) {

@@ -99,7 +99,7 @@ import UploadExcelComponent from "@/components/UploadExcel/index";
 import Pagination from "@/components/Pagination";
 // import { getBatchTemplate } from "@/api/device/LBJ.js";
 // import { getFireList } from "@/api/systemSetting/customerDevices";
-import { getAlarmList } from "@/api/systemSetting/customerDevices";
+import { getAlarmModelList } from "@/api/systemSetting/customerDevices";
 import { getAlarmDeviceList, registerAlarmDevice } from "@/api/device/LBJ.js";
 export default {
   components: {
@@ -150,11 +150,11 @@ export default {
   },
   created() {
     this.getFireListInfo();
-    this.getAlarmListInfo();
+    this.getAlarmModelListInfo();
   },
   methods: {
     // 获取报警型号分页列表
-    async getAlarmListInfo() {
+    async getAlarmModelListInfo() {
       try {
         const data = await getAlarmDeviceList({
           offset: this.page.resultSize,
@@ -169,7 +169,7 @@ export default {
     // 获取灭火设备型号
     async getFireListInfo() {
       try {
-        const data = await getAlarmList();
+        const data = await getAlarmModelList();
         this.fireList = data.data;
       } catch (error) {
         console.log(error);

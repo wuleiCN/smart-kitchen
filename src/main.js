@@ -7,6 +7,7 @@ import "element-ui/lib/theme-chalk/index.css"
 import "../src/assets/style/index.scss"
 import "./router/index"
 import { Message } from "element-ui"
+import "default-passive-events"
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false

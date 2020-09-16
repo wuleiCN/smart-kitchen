@@ -5,42 +5,42 @@
         <el-row :gutter="10">
           <el-col :span="6">
             <el-form-item label="设备编码" label-width="80px">
-              <el-input autocomplete="off" />
+              <el-input v-model="select.Code" autocomplete="off" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="设备型号编码" label-width="96px">
-              <el-input autocomplete="off" />
+              <el-input v-model="select.ComNumber" autocomplete="off" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="生产批次" label-width="80px">
-              <el-input autocomplete="off" />
+              <el-input v-model="select.BatchNo" autocomplete="off" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="状 态" label-width="80px">
-              <el-input autocomplete="off" />
+            <el-form-item label="型号名称" label-width="80px">
+              <el-input v-model="select.AlertDeviceModel" autocomplete="off" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="6">
-            <el-form-item label="型号名称" label-width="80px">
-              <el-select v-model="value">
+            <el-form-item label="状态" label-width="80px">
+              <el-select v-model="select.StatusName" filterable placeholder="请选择">
                 <el-option
-                  v-for="item in options"
+                  v-for="item in statusOptions"
                   :key="item.value"
-                  :label="item.label"
+                  :label="item.value"
                   :value="item.value"
                 />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="注册日期" label-width="96px">
+            <el-form-item label="注册日期" label-width="90px">
               <el-date-picker
-                v-model="dateValue"
+                v-model="select.RegistOn"
                 type="daterange"
                 align="right"
                 unlink-panels
@@ -58,9 +58,9 @@
               size="small"
               icon="el-icon-search"
               style="margin-left: 30px;"
-              @click="get"
+              @click="getFireByQueryList"
             >查 询</el-button>
-            <el-button type="success" size="small" icon="el-icon-plus" @click="get">设备注册</el-button>
+            <el-button type="success" size="small" icon="el-icon-plus">设备注册</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -73,12 +73,14 @@
         border
         size="mini"
       >
-        <el-table-column prop="date" label="设备编码" align="left" />
-        <el-table-column prop="name" label="设备型号编码" width="240" align="center" />
-        <el-table-column prop="name" label="生产批次" align="center" />
-        <el-table-column prop="name" label="型号名称" align="center" />
-        <el-table-column prop="name" label="状态" align="center" />
-        <el-table-column prop="name" label="注册日期" align="center" />
+        <el-table-column prop="Code" label="设备编码" align="left" />
+        <el-table-column prop="ComNumber" label="设备型号编码" width="240" align="center" />
+        <el-table-column prop="BatchNo" label="生产批次" align="center" />
+        <el-table-column prop="AlertDeviceModel" label="型号名称" align="center" />
+        <el-table-column prop="StatusName" label="状态" align="center" />
+        <el-table-column prop="RegistOn" label="注册日期" align="center">
+          <template #default="{row: time}">{{ time.RegistOn }}</template>
+        </el-table-column>
         <el-table-column #default="{row: data}" label="操作" align="center">
           <el-button size="mini" icon="el-icon-edit" type="text" @click="editData(data)">修改</el-button>
           <el-button size="mini" icon="el-icon-delete" type="text" @click="deleteData(data)">删除</el-button>
@@ -97,7 +99,7 @@
 <script>
 import Batch from "@/views/deviceManagement/FF/Batch";
 import Pagination from "@/components/Pagination";
-// import { getFiresByQuery } from "@/api/device/FF.js";
+import { getFiresByQuery } from "@/api/device/FF.js";
 export default {
   components: {
     Pagination
@@ -135,19 +137,17 @@ export default {
           }
         ]
       },
-      dateValue: [],
       tableData: [],
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        }
-      ],
       value: "",
+      statusOptions: [{ value: "在用" }, { value: "停用" }],
+      select: {
+        BatchNo: "",
+        Code: "",
+        ComNumber: "",
+        Models: "",
+        Statuses: "",
+        RegistOn: []
+      },
       page: {
         pageNo: 1,
         resultSize: 10,
@@ -156,18 +156,21 @@ export default {
     };
   },
   created() {
-    // this.getFiresList()
+    this.getFiresList();
   },
   methods: {
     // 灭火设备信息列表
-    // async getFiresList() {
-    //   const data = await getFiresByQuery({
-    //     offset: this.page.resultSize,
-    //     limit: (this.page.pageNo - 1) * this.page.resultSize,
-    //     order: "asc"
-    //   });
-    //   console.log(data);
-    // },
+    async getFiresList() {
+      const { data: res } = await getFiresByQuery({
+        offset: (this.page.pageNo - 1) * this.page.resultSize,
+        limit: this.page.resultSize,
+        order: "asc"
+      });
+      this.tableData = res.rows
+      this.page.total = res.total
+      console.log(res);
+    },
+    getFireByQueryList() {},
     // 分页
     pagination() {
       console.log(this.page);

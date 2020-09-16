@@ -5,6 +5,6 @@ export const getFiresByQuery = data => {
   return request({
     url: "api/Alarms/GetAlarmsByQueryWithPage",
     method: "get",
-    data
+    params: data
   })
 }

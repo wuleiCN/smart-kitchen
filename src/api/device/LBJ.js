@@ -5,11 +5,7 @@ export const getAlarmDeviceList = data => {
   return request({
     url: "api/Alarms/GetAlarmsWithPage",
     method: "get",
-    params: {
-      offset: data.offset,
-      limit: data.limit,
-      order: data.order
-    }
+    params: data
   })
 }
 // 获得指定查询条件的报警设备信息（分页）
@@ -17,11 +13,15 @@ export const getAlarmByQuery = data => {
   return request({
     url: "api/Alarms/GetAlarmsByQueryWithPage",
     method: "get",
-    params: {
-      offset: data.offset,
-      limit: data.limit,
-      order: data.order
-    }
+    params: data
+  })
+}
+// 注册报警设备
+export const registerAlarm = data => {
+  return request({
+    url: "api/Alarms/Regist",
+    method: "post",
+    data
   })
 }
 // 批量注册报警设备
@@ -30,6 +30,22 @@ export const registerAlarmDevice = data => {
     url: "api/Alarms/BatchRegist",
     method: "post",
     data
+  })
+}
+// 更新报警设备
+export const updataAlarmDevice = data => {
+  return request({
+    url: "api/Alarms/Update",
+    method: "post",
+    data
+  })
+}
+// 删除报警设备
+export const deleteAlarmDevice = id => {
+  return request({
+    url: "api/Alarms/Delete",
+    method: "post",
+    id
   })
 }
 // 下载报警设备批量注册模板文件

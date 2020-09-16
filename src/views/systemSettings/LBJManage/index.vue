@@ -141,7 +141,7 @@
 
 <script>
 import {
-  getAlarmList,
+  getAlarmModelList,
   updataAlarm,
   addAlarm,
   deleteAlarm
@@ -169,7 +169,7 @@ export default {
     // 获取列表
     async getCustomerDevicesData() {
       try {
-        const data = await getAlarmList();
+        const data = await getAlarmModelList();
         if (data.status === 200) {
           this.tableData = data.data;
           this.loading = false;

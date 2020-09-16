@@ -98,7 +98,7 @@
 import UploadExcelComponent from "@/components/UploadExcel/index";
 import Pagination from "@/components/Pagination";
 // import { getBatchTemplate } from "@/api/device/LBJ.js";
-import { getAlarmList } from "@/api/systemSetting/customerDevices";
+import { getAlarmModelList } from "@/api/systemSetting/customerDevices";
 export default {
   components: {
     UploadExcelComponent,
@@ -120,13 +120,13 @@ export default {
     };
   },
   created() {
-    this.getAlarmListInfo();
+    this.getAlarmModelListInfo();
   },
   methods: {
     // 获取灭火设备型号
-    async getAlarmListInfo() {
+    async getAlarmModelListInfo() {
       try {
-        const data = await getAlarmList();
+        const data = await getAlarmModelList();
         this.alarmList = data.data;
       } catch (error) {
         console.log(error);

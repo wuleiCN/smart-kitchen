@@ -21,7 +21,9 @@
         <el-table-column type="index" label="序号" width="180" align="center" />
         <el-table-column prop="meta.icon" label="图标" align="center" />
         <el-table-column prop="path" label="页面地址" align="center" />
-        <el-table-column prop="address" label="禁用" align="center" />
+        <el-table-column prop="address" label="禁用" align="center">
+          <template #default="{row: data}">{{ data.hidden ? '禁用' : '启用' }}</template>
+        </el-table-column>
         <el-table-column prop="address" label="菜单类别" align="center" />
         <el-table-column #default="{row: data}" label="操作" align="center">
           <el-button size="mini" icon="el-icon-plus" type="text" @click="addData(data)">添加</el-button>
@@ -39,18 +41,18 @@
     </el-dialog>
     <!-- 修改 -->
     <el-dialog title="修改" :visible.sync="dialogEditDataVisible" @close="editFormClose">
-      <el-form>
+      <el-form ref="menuRef" :model="menuForm">
         <el-form-item label="序号" label-width="100px">
           <el-input autocomplete="off" />
         </el-form-item>
         <el-form-item label="名称" label-width="100px">
-          <el-input autocomplete="off" />
+          <el-input v-model="menuForm.meta.title" autocomplete="off" />
         </el-form-item>
         <el-form-item label="代码" label-width="100px">
           <el-input autocomplete="off" />
         </el-form-item>
         <el-form-item label="图标" label-width="100px">
-          <el-select v-model="menuForm.value" placeholder="请选择">
+          <el-select v-model="menuForm.meta.icon" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -64,23 +66,23 @@
         </el-form-item>
         <el-form-item label="禁用" label-width="100px">
           <el-switch
-            v-model="menuForm.disable"
+            v-model="menuForm.hidden"
             style="display: block"
             active-color="#13ce66"
             inactive-color="#ff4949"
-            :active-text="menuForm.disable ? '是' : '否'"
+            :active-text="menuForm.hidden ? '是' : '否'"
             @change="isDisable"
           />
         </el-form-item>
         <el-form-item label="菜单类别" label-width="100px">
-          <el-radio v-model="menuForm.menuCag" label="1">菜单项</el-radio>
-          <el-radio v-model="menuForm.menuCag" label="2">按钮</el-radio>
-          <el-radio v-model="menuForm.menuCag" label="3">功能组</el-radio>
+          <el-radio v-model="menuForm.meta.menuCatatory" :label="1">菜单项</el-radio>
+          <el-radio v-model="menuForm.meta.menuCatatory" :label="2">按钮</el-radio>
+          <el-radio v-model="menuForm.meta.menuCatatory" :label="3">功能组</el-radio>
         </el-form-item>
         <el-form-item label="菜单分组" label-width="100px">
-          <el-radio v-model="menuForm.menuGroup" label="1">超级Web后台</el-radio>
-          <el-radio v-model="menuForm.menuGroup" label="2">公司Web后台</el-radio>
-          <el-radio v-model="menuForm.menuGroup" label="3">客户Web后台</el-radio>
+          <el-radio v-model="menuForm.meta.menuGroup" :label="10">超级Web后台</el-radio>
+          <el-radio v-model="menuForm.meta.menuGroup" :label="20">公司Web后台</el-radio>
+          <el-radio v-model="menuForm.meta.menuGroup" :label="30">客户Web后台</el-radio>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -97,8 +99,7 @@ export default {
     return {
       tableData: [],
       menuForm: {
-        menuCag: 1,
-        menuGroup: 1
+        meta: {}
       },
       options: [
         {
@@ -117,7 +118,7 @@ export default {
   },
   created() {
     let routes = this.$store.state.routers;
-    routes = routes.slice(2)
+    routes = routes.slice(2);
     this.tableData = routes;
   },
   methods: {

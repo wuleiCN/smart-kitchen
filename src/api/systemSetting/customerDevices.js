@@ -1,7 +1,7 @@
 import request from "@/utils/request"
 
 // 获取报警型号列表
-export const getAlarmList = () => {
+export const getAlarmModelList = () => {
   return request({
     url: "api/DeviceModels/GetAlarmModels",
     method: "get"
