@@ -5,29 +5,29 @@
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="公司类别" label-width="110px">
-              <el-input autocomplete="off" />
+              <el-input v-model="companyForm.Type" autocomplete="off" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="公司名称" label-width="110px">
-              <el-input autocomplete="off" />
+              <el-input v-model="companyForm.Name" autocomplete="off" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="统一社会信用码" label-width="110px">
-              <el-input autocomplete="off" />
+              <el-input v-model="companyForm.CreditNo" autocomplete="off" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="公司地址" label-width="110px">
-              <el-input autocomplete="off" />
+              <el-input v-model="companyForm.Address" autocomplete="off" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="法人代表" label-width="110px">
-              <el-input autocomplete="off" />
+              <el-input v-model="companyForm.Master" autocomplete="off" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -92,7 +92,6 @@
 </template>
 
 <script>
-import Batch from "@/views/deviceManagement/FF/Batch";
 import Pagination from "@/components/Pagination";
 import { getList } from "@/api/company/maintain";
 export default {
@@ -141,8 +140,8 @@ export default {
         Address: "",
         Master: "",
         Statuses: "",
-        RegistOnFrom: new Date().getTime(),
-        RegistOnTo: new Date().getTime()
+        RegistOnFrom: null,
+        RegistOnTo: null
       },
       loading: true,
       page: {
@@ -152,12 +151,19 @@ export default {
       }
     };
   },
+  watch: {
+    dateValue(e, v) {
+      this.companyForm.RegistOnFrom = e[0].getTime()
+      this.companyForm.RegistOnTo = e[1].getTime()
+    }
+  },
   created() {
     this.getListInfo();
   },
   methods: {
     async getListInfo() {
       try {
+        // const companyForm = JSON.stringify(this.companyForm)
         const { data } = await getList();
         if (data.status === 200) {
           this.tableData = data.data;
@@ -175,10 +181,10 @@ export default {
       console.log(this.page);
     },
     val(v) {
-      console.log(v);
+      console.log(v, this.companyForm);
     },
     get() {
-      console.log(Batch);
+      console.log(">>>> select");
     }
   }
 };

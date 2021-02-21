@@ -25,7 +25,7 @@ service.interceptors.request.use(
   }
 )
 axios.interceptors.response.use(res => {
-  // console.log('res intercepoter:  ', res)
+  console.log("res intercepoter:  ", res)
   if (![200, 201].includes(res.data.meta.status)) {
     Notification.error({
       title: "网络请求超时",

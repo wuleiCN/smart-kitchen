@@ -66,7 +66,7 @@
         />
       </el-form>
       <!-- 第四步 -->
-      <el-form v-if="active === 3">
+      <el-form v-if="active === 3" ref="fireRef">
         <el-table
           :data="tableData"
           style="width: 100%;margin-bottom: 20px;"
@@ -114,13 +114,11 @@ export default {
         BatchNo: "",
         ModelId: "",
         BatchFile: [],
-        RegistOn: new Date().getTime(),
-        Dealer: this.$store.state.userInfo
+        RegistOn: new Date().getTime()
       },
       file: false,
       fireFile: "",
       tableData: [],
-      BatchFile: [],
       progressPercent: 0,
       status: true,
       page: {
@@ -180,7 +178,7 @@ export default {
       console.log(this.page);
     },
     prev() {
-      this.$refs.fireRef.validate((valid) => {
+      this.$refs.fireRef.validate(async (valid) => {
         if (valid) {
           if (this.active++ > 2) {
             this.active = 3;
@@ -188,31 +186,23 @@ export default {
           if (this.active === 2) {
             console.log(this.active);
             this.status = true;
-            var timer = setInterval(() => {
-              let i = 5;
-              i < 10 ? i++ : (i = 1);
-              // (this.progressPercent < 90) || (this.progressPercent = this.progressPercent + 5);
-              this.progressPercent < 89
-                ? (this.progressPercent = this.progressPercent + i)
-                : (this.progressPercent = 90);
-              console.log(this.progressPercent);
-            }, 300);
-            console.log(this.progressPercent);
-            registerAlarmDevice(this.fireForm)
+            var configs = {
+              onUploadProgress: e => {
+                var complete = (e.loaded / e.total * 100 | 0)
+                this.progressPercent = complete
+              }
+            }
+            registerAlarmDevice(this.fireForm, configs)
               .then((data) => {
                 if (data.data.success) {
-                  clearInterval(timer);
                   this.progressPercent = 100;
                   console.log(data);
                 } else {
-                  clearInterval(timer);
-                  this.progressPercent = 90
                   this.status = false
                   this.$message.error(data.data.message)
                 }
               })
               .catch((err) => {
-                clearInterval(timer);
                 this.status = false;
                 console.log(err);
               });

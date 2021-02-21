@@ -8,14 +8,16 @@ import "../src/assets/style/index.scss"
 import "./router/index"
 import { Message } from "element-ui"
 import "default-passive-events"
+// import axios from "axios"
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 // Vue.http.options.credentials = true
+// Vue.prototype.$http = axios;
 Vue.prototype.$message = Message
 // 时间格式化
 Vue.filter("dateFormat", function (originVal) {
-  const dt = new Date(originVal * 1000)
+  const dt = new Date(originVal)
 
   const y = dt.getFullYear()
   const m = (dt.getMonth() + 1 + "").padStart(2, "0")

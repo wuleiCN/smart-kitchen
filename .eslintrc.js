@@ -52,6 +52,7 @@ module.exports = {
       "before": true,
       "after": true
     }],
+    "vue/no-parsing-error": [2, { "x-invalid-end-tag": false }],
     "handle-callback-err": [2, "^(err|error)$"],
     "indent": [2, 2, {
       "SwitchCase": 1

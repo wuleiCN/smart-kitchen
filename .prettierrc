@@ -1,5 +1,8 @@
 
 {
-  "eslintIntegration": true,  //让prettier使用eslint的代码格式进行校验
-  "singleQuote": true  //使用带引号替代双引号
+  "eslintIntegration": true,
+  "singleQuote": true,
+  "editor.formatOnSave": true,
+  "eslint.autoFixOnSave": true,
+  "trailingComma": "all"
 }

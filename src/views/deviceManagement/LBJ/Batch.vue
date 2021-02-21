@@ -8,17 +8,17 @@
         <el-step title="注册结果" />
       </el-steps>
       <!-- 第一步 -->
-      <el-form v-if="active === 0">
-        <el-form-item label="生产批次" label-width="120px">
-          <el-input autocomplete="off" />
+      <el-form v-if="active === 0" ref="alertRef" :model="alertForm" :rules="alertRule">
+        <el-form-item label="生产批次" label-width="120px" prop="BatchNo">
+          <el-input v-model="alertForm.BatchNo" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="设备型号" label-width="120px">
-          <el-select v-model="alarmValue">
+        <el-form-item label="设备型号" label-width="120px" prop="ModelId">
+          <el-select v-model="alertForm.ModelId">
             <el-option
               v-for="item in alarmList"
               :key="item.Id"
               :label="item.Name"
-              :value="item.value"
+              :value="item.Id"
             />
           </el-select>
         </el-form-item>
@@ -40,7 +40,7 @@
         </el-form-item>
       </el-form>
       <!-- 第二步 -->
-      <el-form v-if="active === 1">
+      <el-form v-if="active === 1" ref="alertRef" :model="alertForm">
         <el-table
           :data="tableData"
           style="width: 100%;margin-bottom: 20px;"
@@ -62,11 +62,11 @@
         />
       </el-form>
       <!-- 第三步 -->
-      <el-form v-if="active === 2">
+      <el-form v-if="active === 2" ref="alertRef">
         <el-progress :text-inside="true" :stroke-width="24" :percentage="100" status="success" />
       </el-form>
       <!-- 第四步 -->
-      <el-form v-if="active === 3">
+      <el-form v-if="active === 3" ref="alertRef">
         <el-table
           :data="tableData"
           style="width: 100%;margin-bottom: 20px;"
@@ -99,6 +99,7 @@ import UploadExcelComponent from "@/components/UploadExcel/index";
 import Pagination from "@/components/Pagination";
 // import { getBatchTemplate } from "@/api/device/LBJ.js";
 import { getAlarmModelList } from "@/api/systemSetting/customerDevices";
+import { getAlarmDeviceList, registerAlarmDevice } from "@/api/device/LBJ.js";
 export default {
   components: {
     UploadExcelComponent,
@@ -108,7 +109,13 @@ export default {
     return {
       active: 0,
       alarmList: [],
-      alarmValue: "",
+      alertForm: {
+        BatchNo: "",
+        ModelId: "",
+        BatchFile: [],
+        RegistOn: new Date().getTime(),
+        Dealer: this.$store.state.userInfo.Id
+      },
       file: false,
       fileValue: "",
       tableData: [],
@@ -116,14 +123,46 @@ export default {
         pageNo: 1,
         resultSize: 10,
         total: 0
+      },
+      alertRule: {
+        BatchNo: [
+          { required: true, message: "请输入生产批次!", trigger: "blur" },
+          {
+            min: 2,
+            message: "长度在 2 个字符以上",
+            trigger: "blur"
+          }
+        ],
+        ModelId: [
+          { required: true, message: "请输入设备型号!", trigger: "change" },
+          {
+            min: 2,
+            message: "长度在 2 个字符以上",
+            trigger: "blur"
+          }
+        ]
       }
     };
   },
   created() {
     this.getAlarmModelListInfo();
+    this.getAlarmListInfo()
   },
   methods: {
-    // 获取灭火设备型号
+    // 获取报警型号分页列表
+    async getAlarmListInfo() {
+      try {
+        const data = await getAlarmDeviceList({
+          offset: this.page.resultSize,
+          limit: (this.page.pageNo - 1) * this.page.resultSize,
+          order: "asc"
+        });
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    // 获取报警设备型号
     async getAlarmModelListInfo() {
       try {
         const data = await getAlarmModelList();
@@ -137,9 +176,36 @@ export default {
       console.log(this.page);
     },
     prev() {
-      if (this.active++ >= 2) {
-        this.active = 3;
-      }
+      this.$refs.alertRef.validate(async (valid) => {
+        console.log("PER")
+        if (valid) {
+          if (this.active++ > 2) {
+            this.active = 3;
+          }
+          if (this.active === 2) {
+            console.log(this.active);
+            this.status = true;
+            console.log(this.progressPercent);
+            registerAlarmDevice(this.alertForm)
+              .then((data) => {
+                if (data.data.success) {
+                  this.progressPercent = 100;
+                  console.log(data);
+                } else {
+                  this.progressPercent = 90
+                  this.status = false
+                  this.$message.error(data.data.message)
+                }
+              })
+              .catch((err) => {
+                this.status = false;
+                console.log(err);
+              });
+          }
+        } else {
+          this.$message.error("请填写必填项！");
+        }
+      });
     },
     next() {
       if (this.active-- <= 0) {
@@ -154,6 +220,7 @@ export default {
     },
     handleSuccess(v) {
       this.fileValue = v.nameFlie;
+      this.alertForm.BatchFile = v.results;
       console.log(v);
     },
     remvoeFile() {

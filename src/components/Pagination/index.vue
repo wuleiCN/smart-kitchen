@@ -65,15 +65,9 @@ export default {
   methods: {
     handleSizeChange(val) {
       this.$emit("pagination", { pageNo: this.currentPage, resultSize: val });
-      if (this.autoScroll) {
-        scrollTo(0, 800);
-      }
     },
     handleCurrentChange(val) {
       this.$emit("pagination", { pageNo: val, resultSize: this.pageSize });
-      if (this.autoScroll) {
-        scrollTo(0, 800);
-      }
     }
   }
 };

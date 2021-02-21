@@ -116,9 +116,10 @@ export default {
   },
   created() {
     this.routes = [];
-    this.routes = this.$store.state.routers;
+    // this.routes = this.$store.state.routers;
+    this.routes = this.$router.options.routes;
     this.routes = this.routes.slice(3);
-    console.log(this.$store.state.routers);
+    console.log(this.routes);
   },
   methods: {
     editData(v) {

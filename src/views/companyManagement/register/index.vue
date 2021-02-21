@@ -168,7 +168,7 @@ export default {
               this.$options.data().companyForm
             );
             this.active = 0;
-            this.$message.error("注册失败！");
+            this.$message.error("注册失败！" + data.data.message);
           }
           console.log(data);
         }

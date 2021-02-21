@@ -41,8 +41,8 @@
 <script>
 import { login, getUser } from "@/api/Login.js";
 import Cookies from "js-cookie";
-import { setSession } from "@/utils/auth.js";
-import { getMenus } from "@/api/menus";
+// import { setSession } from "@/utils/auth.js";
+// import { getMenus } from "@/api/menus";
 // import tk from "@/utils/token.js";
 export default {
   data() {
@@ -77,18 +77,21 @@ export default {
     Login() {
       this.$refs.ruleForm.validate(async (valid) => {
         if (valid) {
-          const { data: res } = await login(this.form);
-          Cookies.set("TOKEN_KEY", res.Token);
+          try {
+            const { data: res } = await login(this.form)
+            Cookies.set("TOKEN_KEY", res.Token);
+          } catch (error) {
+            this.$message.error("连接超时，请稍后重试！");
+            console.log(error);
+          }
           const { data: info } = await getUser();
-          // setToken("TOKEN_KEY", res.Token);
-          getMenus().then((data) => {
-            // this.$store.dispatch("getRoutesSync");
-            console.log(data);
-            setSession("ROUTES_KEY", data.data);
-          });
-          setSession("USER_INFO", info);
+          // getMenus().then((data) => {
+          //   console.log(data);
+          //   setSession("ROUTES_KEY", data.data);
+          // });
+          // setSession("USER_INFO", info);
           this.$store.dispatch("updateLoadMenus", true);
-          console.log(info, res, this.$store.state.loadMenus);
+          console.log(info);
           this.$router.push({ path: "/" });
         } else {
           console.log("error submit!!");

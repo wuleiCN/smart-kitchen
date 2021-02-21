@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-aside :width="isCollapse ? '' : '220px'">
+    <el-aside ref="aside" :width="isCollapse ? '' : '220px'">
       <div class="fold">
         <a @click="isCollapse = !isCollapse">
           <i v-show="!isCollapse" class="el-icon-s-fold"></i>
@@ -15,6 +15,7 @@
         unique-opened
         class="el-menu-vertical-demo"
         :collapse="isCollapse"
+        @open="handleOpen()"
       >
         <el-menu-item index="/">
           <i class="el-icon-menu"></i>
@@ -42,7 +43,7 @@
                   :index="item.path+'/'+v.path+'/'+value.path"
                 >
                   <template slot="title">
-                    <i :class="v.meta.icon"></i>
+                    <i :class="value.meta.icon"></i>
                     <span v-show="!isCollapse">{{ value.meta.title }}</span>
                   </template>
                 </el-menu-item>
@@ -79,12 +80,16 @@ export default {
   created() {
     // this.routes = [];
     // this.routes = getSession("ROUTES_KEY")
-    // this.routes = this.$router.options.routes;
-    this.routes = this.$store.state.routers;
+    this.routes = this.$router.options.routes;
+    // this.routes = this.$store.state.routers;
     this.routes = this.routes.slice(3);
-    console.log(this.$store.state.routers);
+    console.log(this.routes);
   },
-  methods: {}
+  methods: {
+    handleOpen(key, path) {
+      this.$emit("select", key, path)
+    }
+  }
 };
 </script>
 

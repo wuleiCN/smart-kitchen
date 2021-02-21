@@ -8,3 +8,11 @@ export const getFiresByQuery = data => {
     params: data
   })
 }
+// 更新灭火设备型号信息
+export const updateFireModel = data => {
+  return request({
+    url: "api/DeviceModels/UpdateFireModel",
+    method: "post",
+    data
+  })
+}

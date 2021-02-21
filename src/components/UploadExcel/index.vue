@@ -96,10 +96,10 @@ export default {
           const workbook = XLSX.read(data, { type: "array" });
           const firstSheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[firstSheetName];
-          // const header = this.getHeaderRow(worksheet);
-          const header = ["设备编码", "通讯号码", "备注"]
-          const R = XLSX.utils.sheet_to_json(worksheet, { defval: "", header: ["设备编码", "通讯号码", "备注"] });
-          const results = R.slice(2)
+          const header = this.getHeaderRow(worksheet);
+          // const header = ["设备编码", "通讯号码", "备注"]
+          const results = XLSX.utils.sheet_to_json(worksheet);
+          // const results = R.slice(2)
           const nameFlie = rawFile.name;
           console.log(worksheet, results);
           this.generateData({ header, results, nameFlie });

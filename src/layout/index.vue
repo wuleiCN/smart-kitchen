@@ -14,25 +14,29 @@
             size="medium"
             src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
           />-->
-          <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
+          <el-dropdown
+            class="avatar-container right-menu-item hover-effect"
+            trigger="click"
+            @command="user"
+          >
             <div class="avatar-wrapper">
               <img :src="userInfo.Avatar" />
               <span>{{ userInfo.Name }}</span>
               <i class="el-icon-caret-bottom"></i>
             </div>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>个人中心</el-dropdown-item>
+              <el-dropdown-item command="a">个人中心</el-dropdown-item>
               <span style="display:block;">
-                <el-dropdown-item divided @click="logOut">退出登录</el-dropdown-item>
+                <el-dropdown-item divided command="b">退出登录</el-dropdown-item>
               </span>
             </el-dropdown-menu>
           </el-dropdown>
           <i class="el-icon-s-tools"></i>
         </div>
       </el-header>
-      <el-container>
+      <el-container ref="con">
         <!-- <el-aside width="220px">Aside</el-aside> -->
-        <Sidebar />
+        <Sidebar ref="sidebar" @select="select" />
         <el-container>
           <el-main>
             <el-breadcrumb separator="/">
@@ -87,16 +91,30 @@ export default {
     this.getMenusList();
     console.log(this.$router, this.userInfo);
   },
+  mounted() {
+    // console.log(this.$refs.sidebar.$el.offsetHeight);
+  },
   methods: {
     async getMenusList() {
       // const data = await getMenus();
       // console.log(data);
     },
+    select(v) {
+      console.log(v);
+    },
     logOut() {
       removeSession("USER_INFO");
       Cookies.remove("TOKEN_KEY");
       location.reload();
-      console.log("out");
+    },
+    user(e) {
+      if (e === "a") {
+        console.log(e)
+      } else if (e === "b") {
+        this.logOut()
+      } else {
+        return false
+      }
     },
     getPath() {
       const route = this.$route;
@@ -115,6 +133,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep .el-container {
+  height: calc(100vh - 45px);
+}
 ::v-deep .el-header {
   width: 100%;
   height: 45px !important;
@@ -179,7 +200,7 @@ export default {
 }
 ::v-deep .el-main {
   padding: 20px 0;
-  height: 715px;
+  // height: calc(100vh - 45px);
   background: #eee;
   .el-breadcrumb {
     margin-left: 20px;

@@ -25,11 +25,12 @@ export const registerAlarm = data => {
   })
 }
 // 批量注册报警设备
-export const registerAlarmDevice = data => {
+export const registerAlarmDevice = (data, config) => {
   return request({
     url: "api/Alarms/BatchRegist",
     method: "post",
-    data
+    data,
+    config
   })
 }
 // 更新报警设备

@@ -2,7 +2,6 @@ module.exports = {
   // pabulicPath:process.env.NODE_ENV === 'production' ? '' : '',
   devServer: {
     port: "8080",
-    // host: " 113.240.150.198",
     // https:false,
     open: true,
     overlay: {
@@ -16,7 +15,7 @@ module.exports = {
         ws: true,
         changeOrigin: true, // 允许跨域
         pathRewrie: {
-          "^/api": "api" // 请求的时候使用这个api就可以
+          "^/api": "" // 请求的时候使用这个api就可以
         }
       }
     }
