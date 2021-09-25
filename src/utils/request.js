@@ -1,5 +1,6 @@
 import axios from "axios"
 import { Notification } from "element-ui"
+import { addPendingRequest, removePendingRequest } from "../utils/cancelToken"
 // import { getToken } from "@/utils/auth"
 import Cookies from "js-cookie"
 const service = axios.create({
@@ -12,6 +13,8 @@ service.interceptors.request.use(
       config.headers["Token"] = Cookies.get("TOKEN_KEY") // 让每个请求携带自定义token 请根据实际情况自行修改
     }
     config.headers["Content-Type"] = "application/json"
+    removePendingRequest(config);
+    addPendingRequest(config);
     return config
   },
   error => {
@@ -26,6 +29,7 @@ service.interceptors.request.use(
 )
 axios.interceptors.response.use(res => {
   console.log("res intercepoter:  ", res)
+  removePendingRequest(res.config)
   if (![200, 201].includes(res.data.meta.status)) {
     Notification.error({
       title: "网络请求超时",

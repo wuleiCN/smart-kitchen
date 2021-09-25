@@ -174,7 +174,7 @@
 </template>
 
 <script>
-import Batch from "@/views/deviceManagement/FF/Batch";
+// import Batch from "@/views/deviceManagement/FF/Batch";
 import Pagination from "@/components/Pagination";
 import { getList } from "@/api/customer/maintain.js";
 import { regionData, CodeToText } from "element-china-area-data";
@@ -297,7 +297,7 @@ export default {
       console.log(v);
     },
     get() {
-      console.log(Batch);
+      this.getListInfo()
     },
     editData(v) {
       this.editForm = v;

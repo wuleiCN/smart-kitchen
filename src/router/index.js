@@ -19,7 +19,7 @@ router.beforeEach(async (to, from, next) => {
       next({ path: "/" })
       NProgress.done()
     } else {
-      if (!store.state.userInfo) {
+      if (store.state.userInfo) {
         store.dispatch("GetInfo").then(res => {
           console.log(store.state.userInfo);
           // routerGo(to, next)

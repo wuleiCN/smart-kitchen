@@ -4,6 +4,7 @@ module.exports = {
     port: "8080",
     // https:false,
     open: true,
+    // productionSourceMap: false,
     overlay: {
       warnings: false,
       errors: true
@@ -19,5 +20,7 @@ module.exports = {
         }
       }
     }
+    // publicPath: "./",
+    // assetsDir: "static"
   }
 }

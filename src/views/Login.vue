@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { login, getUser } from "@/api/Login.js";
+import { login } from "@/api/Login.js";
 import Cookies from "js-cookie";
 // import { setSession } from "@/utils/auth.js";
 // import { getMenus } from "@/api/menus";
@@ -84,14 +84,14 @@ export default {
             this.$message.error("连接超时，请稍后重试！");
             console.log(error);
           }
-          const { data: info } = await getUser();
+          // const { data: info } = await getUser();
           // getMenus().then((data) => {
           //   console.log(data);
           //   setSession("ROUTES_KEY", data.data);
           // });
           // setSession("USER_INFO", info);
           this.$store.dispatch("updateLoadMenus", true);
-          console.log(info);
+          // console.log(info);
           this.$router.push({ path: "/" });
         } else {
           console.log("error submit!!");

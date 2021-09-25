@@ -128,26 +128,6 @@ export default {
       updataType: "",
       orderStatus: "getOrderStatus",
       orderType: "getOrderType",
-      typeOptions: [
-        {
-          value: "选项1",
-          label: "创建"
-        },
-        {
-          value: "选项2",
-          label: "安装"
-        }
-      ],
-      statusOptions: [
-        {
-          value: "选项1",
-          label: "创建"
-        },
-        {
-          value: "选项2",
-          label: "安装"
-        }
-      ],
       tableData: [],
       page: {
         pageNo: 1,
@@ -201,6 +181,12 @@ export default {
     },
     get() {
       console.log(Batch);
+    },
+    editData(v) {
+      console.log(v);
+    },
+    deleteData(v) {
+      console.log(v);
     }
   }
 };

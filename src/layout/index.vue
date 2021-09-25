@@ -20,9 +20,9 @@
             @command="user"
           >
             <div class="avatar-wrapper">
-              <img :src="userInfo.Avatar" />
+              <!-- <img :src="userInfo.Avatar" />
               <span>{{ userInfo.Name }}</span>
-              <i class="el-icon-caret-bottom"></i>
+              <i class="el-icon-caret-bottom"></i> -->
             </div>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="a">个人中心</el-dropdown-item>
